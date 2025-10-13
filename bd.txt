@@ -1,0 +1,68 @@
+-- ============================================================
+-- TABELA: empresas
+-- ============================================================
+
+CREATE TABLE empresas (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    telefone VARCHAR(15) NOT NULL,
+    cnpj VARCHAR(14) NOT NULL,  
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
+-- TABELA: usuarios
+-- ============================================================
+
+CREATE TABLE usuarios (
+    id SERIAL PRIMARY KEY,
+    empresa_id INTEGER NOT NULL REFERENCES empresas(id) ON DELETE CASCADE,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    telefone VARCHAR(15) NOT NULL,
+    cpf VARCHAR(11) NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
+-- TABELA: funcoes
+-- ============================================================
+
+CREATE TABLE funcoes (
+    id SERIAL PRIMARY KEY,
+    empresa_id INTEGER NOT NULL REFERENCES empresas(id) ON DELETE CASCADE,
+    nome VARCHAR(255) NOT NULL,
+    descricao VARCHAR(255),
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
+-- TABELA: evento_logs
+-- ============================================================
+
+CREATE TABLE evento_logs (
+    id SERIAL PRIMARY KEY,
+    empresa_id INTEGER NOT NULL REFERENCES empresas(id) ON DELETE CASCADE,
+    usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    funcao_id INTEGER NOT NULL REFERENCES funcoes(id) ON DELETE CASCADE,
+    dispositivo_id VARCHAR(100),
+    nome VARCHAR(50) NOT NULL,
+    descricao VARCHAR(255),   
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
+-- ÍNDICES
+-- ============================================================
+
+CREATE INDEX idx_evento_logs_empresa ON evento_logs (empresa_id);
+CREATE INDEX idx_evento_logs_usuario ON evento_logs (usuario_id);
+CREATE INDEX idx_evento_logs_funcao ON evento_logs (funcao_id);
+CREATE INDEX idx_evento_logs_dispositivo ON evento_logs (dispositivo_id);
