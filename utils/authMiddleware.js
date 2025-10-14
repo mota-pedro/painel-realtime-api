@@ -12,8 +12,8 @@ export const verifyToken = async (req, reply) => {
     const decoded = jwt.verify(token, jwtSecret);
 
     req.user = {
-      id: decoded.userId,
-      empresa_id: decoded.empresa_id,
+      funcod: decoded.funcod,
+      prpcod: decoded.prpcod,
     };
   } catch (err) {
     return reply.status(401).send({ error: "Token inválido ou expirado" });

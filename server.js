@@ -49,7 +49,6 @@ app.addHook("onRequest", async (req, reply) => {
 
 // rotas
 import authRoutes from "./routes/auth.js";
-import eventoRoutes from "./routes/evento.js";
 import funcaoRoutes from "./routes/funcao.js";
 import funcionarioRoutes from "./routes/funcionario.js";
 import proprioRoutes from "./routes/proprio.js";
@@ -58,7 +57,6 @@ import movimentacaoRoutes from "./routes/movimentacao.js";
 app.register(
   async (fastify) => {
     fastify.register(authRoutes, { prefix: "/auth" });
-    fastify.register(eventoRoutes, { prefix: "/eventos" });
     fastify.register(funcaoRoutes, { prefix: "/funcoes" });
     fastify.register(funcionarioRoutes, { prefix: "/funcionarios" });
     fastify.register(proprioRoutes, { prefix: "/empresas" });

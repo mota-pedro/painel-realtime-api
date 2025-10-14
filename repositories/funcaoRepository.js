@@ -1,29 +1,31 @@
 import models from "../models/modelos.js";
 const { Funcao } = models;
 
-const createFuncao = async ({ empresa_id, nome, descricao, ativo = true }) => {
-  return Funcao.create({ empresa_id, nome, descricao, ativo });
+const createFuncao = async ({ 
+  fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver
+}) => {
+  return Funcao.create({ fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver });
 };
 
-const updateFuncao = async (id, data) => {
-  const f = await Funcao.findByPk(id);
+const updateFuncao = async (fnccod, data) => {
+  const f = await Funcao.findByPk(fnccod);
   if (!f) return null;
   return f.update(data);
 };
 
-const findById = async (id) => {
-  return Funcao.findByPk(id);
+const findById = async (fnccod) => {
+  return Funcao.findByPk(fnccod);
 };
 
-const findAllByEmpresa = async (empresa_id) => {
+const findAllBySetor = async (setcod) => {
   return Funcao.findAll({
-    where: { empresa_id },
-    order: [["id", "ASC"]],
+    where: { setcod },
+    order: [["SETCOD", "ASC"]],
   });
 };
 
-const removeFuncao = async (id) => {
-  const f = await Funcao.findByPk(id);
+const removeFuncao = async (fnccod) => {
+  const f = await Funcao.findByPk(fnccod);
   if (!f) return null;
   await f.destroy();
   return f;
@@ -33,6 +35,6 @@ export default {
   createFuncao,
   updateFuncao,
   findById,
-  findAllByEmpresa,
+  findAllBySetor,
   removeFuncao,
 };

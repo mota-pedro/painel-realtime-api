@@ -2,12 +2,11 @@ import funcService from "../services/funcaoService.js";
 
 const create = async (req, reply) => {
   try {
-    const { empresa_id, nome, descricao, ativo } = req.body;
+    const { 
+      fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver 
+    } = req.body;
     const created = await funcService.create({
-      empresa_id,
-      nome,
-      descricao,
-      ativo,
+      fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver
     });
     return reply.send(created);
   } catch (err) {
@@ -18,9 +17,9 @@ const create = async (req, reply) => {
 
 const update = async (req, reply) => {
   try {
-    const { id } = req.params;
+    const { fnccod } = req.params;
     const data = req.body;
-    const updated = await funcService.update(id, data);
+    const updated = await funcService.update(fnccod, data);
     return reply.send(updated);
   } catch (err) {
     req.log.error(err);
@@ -28,10 +27,10 @@ const update = async (req, reply) => {
   }
 };
 
-const listByEmpresa = async (req, reply) => {
+const listBySetor = async (req, reply) => {
   try {
-    const { empresa_id } = req.params;
-    const rows = await funcService.listByEmpresa(empresa_id);
+    const { setcod } = req.params;
+    const rows = await funcService.listBySetor(setcod);
     return reply.send(rows);
   } catch (err) {
     req.log.error(err);
@@ -41,8 +40,8 @@ const listByEmpresa = async (req, reply) => {
 
 const getById = async (req, reply) => {
   try {
-    const { id } = req.params;
-    const f = await funcService.getById(id);
+    const { fnccod } = req.params;
+    const f = await funcService.getById(fnccod);
     if (!f) return reply.status(404).send({ error: "not_found" });
     return reply.send(f);
   } catch (err) {
@@ -53,8 +52,8 @@ const getById = async (req, reply) => {
 
 const remove = async (req, reply) => {
   try {
-    const { id } = req.params;
-    await funcService.remove(id);
+    const { fnccod } = req.params;
+    await funcService.remove(fnccod);
     return reply.send({ ok: true });
   } catch (err) {
     req.log.error(err);
@@ -62,4 +61,4 @@ const remove = async (req, reply) => {
   }
 };
 
-export default { create, update, listByEmpresa, getById, remove };
+export default { create, update, listBySetor, getById, remove };
