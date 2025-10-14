@@ -3,33 +3,26 @@ const { login: _login, cadastro: _cadastro } = authService;
 
 const login = async (req, reply) => {
   try {
-    const { empresa_id, usuario_id, senha } = req.body;
+    const { prpcod, funcod, funsen } = req.body;
 
-    if (!empresa_id || !usuario_id || !senha) {
+    if (!prpcod || !funcod || !funsen) {
       return reply
         .status(400)
         .send({ error: "Parâmetros obrigatórios ausentes" });
     }
 
-    const result = await _login({ empresa_id, usuario_id, senha });
-    console.log("01 Funções da empresa:", result);
+    const result = await _login({ prpcod, funcod, funsen });
+    console.log("Movimentações da empresa:", result);
     return reply.send({
       empresa: {
-        id: result.empresa.id,
-        nome: result.empresa.nome,
-        cnpj: result.empresa.cnpj,
-        telefone: result.empresa.telefone,
-        ativo: result.empresa.ativo,
+        prpcod: result.proprio.prpcod,
+        prpdes: result.proprio.prpdes,
       },
-      user: {
-        id: result.user.id,
-        nome: result.user.nome,
-        cpf: result.user.cpf,
-        email: result.user.email,
-        telefone: result.user.telefone,
-        ativo: result.user.ativo,
+      funcionario: {
+        funcod: result.funcionario.funcod,
+        fundes: result.funcionario.fundes,
       },
-      funcoes: result.funcoes,
+      movimentacoes: result.movimentacoes,
       token: result.token,
     });
   } catch (err) {
@@ -41,17 +34,48 @@ const login = async (req, reply) => {
 const cadastro = async (req, reply) => {
   try {
     const {
-      empresa_nome,
-      empresa_email,
-      empresa_telefone,
-      empresa_cnpj,
-      usuario_nome,
-      usuario_email,
-      usuario_telefone,
-      usuario_cpf,
-      usuario_senha,
+      prpdes, 
+      prpfan, 
+      prpcgc, 
+      prpierg,
+      prpincmun,
+      prpend,
+      prpcmp,
+      prpnum,
+      prpbai,
+      prpmun,
+      prpuf,
+      prpcep,
+      prpcodibge,
+      prptel,
+      prpemail,
+      prpresp,
+      prplogo,
+      prpobs,
+      prpdatcad,
+      modpnlcod,
+      fundes,
+      funcpf,
+      funrg,
+      funend,
+      funbai,
+      funcmp,
+      funnum,
+      funmun,
+      funuf,
+      funcep,
+      funcodibge,
+      funtel,
+      funemail,
+      funfotdoc,
+      funobs,
+      funlog,
+      funsen,
+      fundatcad,
+      funati,
     } = req.body;
 
+    /*
     if (
       !empresa_nome ||
       !empresa_cnpj ||
@@ -63,23 +87,54 @@ const cadastro = async (req, reply) => {
         .status(400)
         .send({ error: "Campos obrigatórios ausentes no cadastro." });
     }
+        */
 
     const result = await _cadastro({
-      empresa_nome,
-      empresa_email,
-      empresa_telefone,
-      empresa_cnpj,
-      usuario_nome,
-      usuario_email,
-      usuario_telefone,
-      usuario_cpf,
-      usuario_senha,
+      prpdes, 
+      prpfan, 
+      prpcgc, 
+      prpierg,
+      prpincmun,
+      prpend,
+      prpcmp,
+      prpnum,
+      prpbai,
+      prpmun,
+      prpuf,
+      prpcep,
+      prpcodibge,
+      prptel,
+      prpemail,
+      prpresp,
+      prplogo,
+      prpobs,
+      prpdatcad,
+      modpnlcod,
+      fundes,
+      funcpf,
+      funrg,
+      funend,
+      funbai,
+      funcmp,
+      funnum,
+      funmun,
+      funuf,
+      funcep,
+      funcodibge,
+      funtel,
+      funemail,
+      funfotdoc,
+      funobs,
+      funlog,
+      funsen,
+      fundatcad,
+      funati,
     });
 
     return reply.status(201).send({
       mensagem: "Dados cadastrados",
       empresa: result.empresa,
-      usuario: result.usuario,
+      funcionario: result.funcionario,
     });
   } catch (err) {
     req.log.error(err);

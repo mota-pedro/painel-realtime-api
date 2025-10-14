@@ -4,7 +4,7 @@ export default (sequelize) => {
   return sequelize.define(
     "Proprio",
     {
-      prpcod: { type: DataTypes.CHAR(4), primaryKey: true, allowNull: false, field: "PRPCOD" },
+      prpcod: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: "PRPCOD" },
       prpdes: { type: DataTypes.STRING(60), allowNull: true, field: "PRPDES" },
       prpfan: { type: DataTypes.STRING(30), allowNull: true, field: "PRPFAN" },
       prpcgc: { type: DataTypes.STRING(14), allowNull: true, field: "PRPCGC" },

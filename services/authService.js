@@ -1,101 +1,152 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-import userRepo from "../repositories/usuarioRepository.js";
-import empresaRepo from "../repositories/empresaRepository.js";
-import funcaoRepo from "../repositories/funcaoRepository.js";
+import funcionarioRepo from "../repositories/funcionarioRepository.js";
+import proprioRepo from "../repositories/proprioRepository.js";
+import movimentacaoRepo from "../repositories/movimentacaoRepository.js";
 import { jwtSecret, jwtExpiresIn } from "../utils/jwt.js";
 
-const login = async ({ empresa_id, usuario_id, senha }) => {
-  const empresa = await empresaRepo.findById(empresa_id);
-  if (!empresa) throw new Error("Empresa não encontrada");
+const login = async ({ prpcod, funcod, funsen }) => {
+  const proprio = await proprioRepo.findById(prpcod);
+  if (!proprio) throw new Error("Empresa não encontrada");
 
-  const user = await userRepo.findById(usuario_id);
-  if (!user) throw new Error("Usuário não encontrado");
+  const funcionario = await funcionarioRepo.findById(funcod);
+  if (!funcionario) throw new Error("Funcionário não encontrado");
 
-  if (user.empresa_id !== empresa.id) {
-    throw new Error("Usuário não pertence à empresa especificada");
+  /*
+  if (funcionario.empresa_id !== proprio.id) {
+    throw new Error("Funcionário não pertence à empresa especificada");
   }
+    */
 
-  const senhaOk = await bcrypt.compare(senha, user.senha);
+  const senhaOk = await bcrypt.compare(funsen, funcionario.funsen);
   if (!senhaOk) throw new Error("Senha incorreta");
 
-  const funcoes = await funcaoRepo.findAllByEmpresa(empresa_id);
+  const movimentacoes = await movimentacaoRepo.findAllByProprio(prpcod);
 
   const token = jwt.sign(
     {
-      userId: user.id,
-      empresa_id: empresa.id,
+      funcod: funcionario.funcod,
+      prpcod: proprio.prpcod,
     },
     jwtSecret,
     { expiresIn: jwtExpiresIn }
   );
 
   return {
-    empresa: {
-      id: empresa.id,
-      nome: empresa.nome,
-      cnpj: empresa.cnpj,
-      telefone: empresa.telefone,
-      ativo: empresa.ativo,
+    proprio: {
+      prpcod: proprio.prpcod,
+      prpdes: proprio.prpdes,
     },
-    user: {
-      id: user.id,
-      nome: user.nome,
-      cpf: user.cpf,
-      email: user.email,
-      telefone: user.telefone,
-      ativo: user.ativo,
-      empresa_id: user.empresa_id,
+    funcionario: {
+      funcod: funcionario.funcod,
+      fundes: funcionario.fundes,
     },
-    funcoes,
+    movimentacoes,
     token,
   };
 };
 
 const cadastro = async (dados) => {
   const {
-    empresa_nome,
-    empresa_email,
-    empresa_telefone,
-    empresa_cnpj,
-    usuario_nome,
-    usuario_email,
-    usuario_telefone,
-    usuario_cpf,
-    usuario_senha,
+    prpdes, 
+    prpfan, 
+    prpcgc, 
+    prpierg,
+    prpincmun,
+    prpend,
+    prpcmp,
+    prpnum,
+    prpbai,
+    prpmun,
+    prpuf,
+    prpcep,
+    prpcodibge,
+    prptel,
+    prpemail,
+    prpresp,
+    prplogo,
+    prpobs,
+    prpdatcad,
+    modpnlcod,
+    fundes,
+    funcpf,
+    funrg,
+    funend,
+    funbai,
+    funcmp,
+    funnum,
+    funmun,
+    funuf,
+    funcep,
+    funcodibge,
+    funtel,
+    funemail,
+    funfotdoc,
+    funobs,
+    funlog,
+    funsen,
+    fundatcad,
+    funati,
   } = dados;
 
-  const empresa = await empresaRepo.create({
-    nome: empresa_nome,
-    email: empresa_email,
-    telefone: empresa_telefone,
-    cnpj: empresa_cnpj,
-    ativo: true,
+  const proprio = await proprioRepo.create({
+    prpdes, 
+    prpfan, 
+    prpcgc, 
+    prpierg,
+    prpincmun,
+    prpend,
+    prpcmp,
+    prpnum,
+    prpbai,
+    prpmun,
+    prpuf,
+    prpcep,
+    prpcodibge,
+    prptel,
+    prpemail,
+    prpresp,
+    prplogo,
+    prpobs,
+    prpdatcad,
+    modpnlcod,
   });
 
-  if (!empresa?.id) {
-    throw new Error("Falha ao criar empresa.");
+  if (!proprio?.prpcod) {
+    throw new Error("Falha ao cadastrar a empresa (próprio).");
   }
 
-  const senhaHash = await bcrypt.hash(usuario_senha, 10);
+  const senhaHash = await bcrypt.hash(funsen, 10);
 
-  const usuario = await userRepo.create({
-    empresa_id: empresa.id,
-    nome: usuario_nome,
-    email: usuario_email,
-    telefone: usuario_telefone,
-    cpf: usuario_cpf,
-    senha: senhaHash,
-    ativo: true,
+  const funcionario = await funcionarioRepo.create({
+    fundes,
+    funcpf,
+    funrg,
+    funend,
+    funbai,
+    funcmp,
+    funnum,
+    funmun,
+    funuf,
+    funcep,
+    funcodibge,
+    funtel,
+    funemail,
+    funfotdoc,
+    funobs,
+    funlog,
+    funsen: senhaHash,
+    fundatcad,
+    funati,
   });
 
-  const usuarioJSON = usuario.toJSON();
-  delete usuarioJSON.senha;
+  const funcionarioJSON = funcionario.toJSON();
+  delete funcionarioJSON.senha;
 
   return {
-    empresa,
-    usuario: usuarioJSON,
+    empresa: proprio,
+    funcionario: funcionarioJSON,
   };
 };
 

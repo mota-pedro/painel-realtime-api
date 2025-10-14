@@ -4,7 +4,7 @@ export default (sequelize) => {
   return sequelize.define(
     "Funcao",
     {
-      fnccod: { type: DataTypes.CHAR(5), primaryKey: true, allowNull: false, field: "FNCCOD" },
+      fnccod: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: "FNCCOD" },
       fncdes: { type: DataTypes.STRING(40), allowNull: true, field: "FNCDES" },
       fncdis: { type: DataTypes.CHAR(3), allowNull: true, field: "FNCDIS" },
       fncbot: { type: DataTypes.CHAR(2), allowNull: true, field: "FNCBOT" },

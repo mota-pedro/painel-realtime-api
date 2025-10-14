@@ -4,7 +4,7 @@ export default (sequelize) => {
   return sequelize.define(
     "MovimentacaoPainel",
     {
-      mpncod: { type: DataTypes.CHAR(10), primaryKey: true, allowNull: false, field: "MPNCOD" },
+      mpncod: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: "MPNCOD" },
       mpndat: { type: DataTypes.DATEONLY, allowNull: true, field: "MPNDAT" },
       mpnhr: { type: DataTypes.TIME, allowNull: true, field: "MPNHR" },
       fnccod: { type: DataTypes.CHAR(5), allowNull: true, field: "FNCCOD" },
@@ -13,6 +13,7 @@ export default (sequelize) => {
       mpnhrfin: { type: DataTypes.TIME, allowNull: true, field: "MPNHRFIN" },
       mpncodfin: { type: DataTypes.CHAR(10), allowNull: true, field: "MPNCODFIN" },
       setcod: { type: DataTypes.CHAR(5), allowNull: true, field: "SETCOD" },
+      prpcod: { type: DataTypes.INTEGER, allowNull: false, field: "PRPCOD" },
     },
     {
       tableName: "movimentacao_painel",

@@ -4,9 +4,9 @@ export default (sequelize) => {
     return sequelize.define(
         "ProprioFuncionario",
         {
-            prpfuncod: {type: DataTypes.CHAR(6), primaryKey: true, allowNull: false, field: "PRPFUNCOD"},
-            prpcod: {type: DataTypes.CHAR(4), allowNull: false, field: "PRPCOD"},
-            funcod: {type: DataTypes.CHAR(6), allowNull: false, field: "FUNCOD"},
+            prpfuncod: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: "PRPFUNCOD"},
+            prpcod: {type: DataTypes.INTEGER, allowNull: false, field: "PRPCOD"},
+            funcod: {type: DataTypes.INTEGER, allowNull: false, field: "FUNCOD"},
         },
         {
             tableName: "proprio_funcionario",

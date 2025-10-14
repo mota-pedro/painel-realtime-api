@@ -4,7 +4,7 @@ export default (sequelize) => {
   return sequelize.define(
     "Funcionario",
     {
-      funcod: { type: DataTypes.CHAR(6), primaryKey: true, allowNull: false, field: "FUNCOD" },
+      funcod: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: "FUNCOD" },
       fundes: { type: DataTypes.STRING(30), allowNull: true, field: "FUNDES" },
       funcpf: { type: DataTypes.STRING(14), allowNull: true, field: "FUNCPF" },
       funrg: { type: DataTypes.STRING(20), allowNull: true, field: "FUNRG" },
@@ -21,7 +21,7 @@ export default (sequelize) => {
       funfotdoc: { type: DataTypes.BLOB("long"), allowNull: true, field: "FUNFOTDOC" },
       funobs: { type: DataTypes.STRING(100), allowNull: true, field: "FUNOBS" },
       funlog: { type: DataTypes.STRING(20), allowNull: true, field: "FUNLOG" },
-      funsen: { type: DataTypes.STRING(10), allowNull: true, field: "FUNSEN" },
+      funsen: { type: DataTypes.STRING(100), allowNull: true, field: "FUNSEN" },
       fundatcad: { type: DataTypes.DATE, allowNull: true, field: "FUNDATCAD" },
       funati: { type: DataTypes.CHAR(1), allowNull: false, defaultValue: "N", field: "FUNATI" },
     },

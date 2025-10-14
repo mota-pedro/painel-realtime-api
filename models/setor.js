@@ -4,7 +4,7 @@ export default (sequelize) => {
     return sequelize.define(
         "Setor",
         {
-            setcod: {type: DataTypes.CHAR(5), primaryKey: true, allowNull: false, field: "SETCOD"},
+            setcod: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: "SETCOD"},
             setdes: {type: DataTypes.STRING(40), allowNull: true, field: "SETDES"},
             setdatcad: {type: DataTypes.DATE, allowNull: true, field: "SETDATCAD"},
         },
