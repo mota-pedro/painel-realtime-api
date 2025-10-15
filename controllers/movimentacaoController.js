@@ -5,10 +5,22 @@ const create = async (req, reply) => {
     const { 
         mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, mpncodfin, setcod, prpcod 
     } = req.body;
-    const created = await movimentacaoService.create({
-      mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, mpncodfin, setcod, prpcod
+    const created = await movimentacaoService.handleIncomingMovimentacao(
+      {mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, mpncodfin, setcod, prpcod},
+      req.server
+    );
+    return reply.send({
+      mpncod: created.mpncod, 
+      mpndat: created.mpndat, 
+      mpnhr: created.mpnhr, 
+      fnccod: created.fnccod, 
+      mpnstt: created.mpnstt, 
+      mpndatfin: created.mpndatfin, 
+      mpnhrfin: created.mpnhrfin, 
+      mpncodfin: created.mpncodfin, 
+      setcod: created.setcod, 
+      prpcod: created.prpcod 
     });
-    return reply.send(created);
   } catch (err) {
     req.log.error(err);
     return reply.status(400).send({ error: err.message });

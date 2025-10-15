@@ -1,10 +1,29 @@
 import movimentacaoRepo from "../repositories/movimentacaoRepository.js";
 
-const create = async ({ mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, mpncodfin, setcod, prpcod }) => {
-  if (!prpcod)
-    throw new Error("prpcod é obrigatório");
+const handleIncomingMovimentacao = async (
+  { mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, mpncodfin, setcod, prpcod },
+  fastify
+) => {
+  const saved = await movimentacaoRepo.createMovimentacao({
+    mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, mpncodfin, setcod, prpcod
+  });
+  if (!prpcod) throw new Error("prpcod é obrigatório");
+
+  fastify.emitToEmpresa(prpcod, "movimentacao", {
+      id: saved.mpncod, 
+      mpndat, 
+      mpnhr, 
+      fnccod, 
+      mpnstt, 
+      mpndatfin, 
+      mpnhrfin, 
+      mpncodfin, 
+      setcod, 
+      prpcod
+  });
+
   return movimentacaoRepo.createMovimentacao({ mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, mpncodfin, setcod, prpcod });
-};
+}
 
 const update = async (mpncod, data) => {
   const updated = await movimentacaoRepo.updateMovimentacao(mpncod, data);
@@ -26,4 +45,4 @@ const remove = async (mpncod) => {
   return removed;
 };
 
-export default { create, update, listByProprio, getById, remove };
+export default { handleIncomingMovimentacao, update, listByProprio, getById, remove };

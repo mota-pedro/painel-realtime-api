@@ -20,52 +20,53 @@ export default fp(async (fastify, opts) => {
     fastify.io.adapter(createAdapter(pubClient, subClient));
   }
 
-  fastify.decorate("emitToEmpresa", (empresa_id, eventName, payload) => {
-    const room = `empresa_${empresa_id}`;
+  fastify.decorate("emitToEmpresa", (prpcod, eventName, payload) => {
+    const room = `empresa_${prpcod}`;
     fastify.io.to(room).emit(eventName, payload);
   });
 
   // middleware de autenticação
   fastify.io.use((socket, next) => {
     try {
-      const token = socket.handshake.auth && socket.handshake.auth.token;
+      const token = socket.handshake.auth?.token;
       if (!token) {
         return next(new Error("Authentication error: token required"));
       }
+
       const decoded = jwt.verify(token, jwtSecret);
 
       socket.user = {
-        id: decoded.id,
-        email: decoded.email,
-        empresa_id: decoded.empresa_id,
-        role: decoded.role || "user",
+        funcod: decoded.funcod,
+        prpcod: decoded.prpcod,
       };
+
       return next();
     } catch (err) {
       return next(new Error("Authentication error: invalid token"));
     }
   });
 
+
   // handle connections
   fastify.io.on("connection", (socket) => {
     fastify.log.info(
-      `Socket connected: ${socket.id} (user=${socket.user?.email || "unknown"})`
+      `Socket connected: ${socket.id} (user=${socket.user?.funcod || "unknown"})`
     );
 
     // join-empresa
-    socket.on("join-empresa", (empresa_id, cb) => {
+    socket.on("join-empresa", (prpcod, cb) => {
       try {
         if (!socket.user) {
           return cb && cb({ error: "not_authenticated" });
         }
-        if (!empresa_id) return cb && cb({ error: "empresa_id_required" });
+        if (!prpcod) return cb && cb({ error: "prpcod_required" });
 
-        if (socket.user.empresa_id !== empresa_id) {
+        if (socket.user.prpcod !== prpcod) {
           fastify.log.warn("Token invalido");
           return cb && cb({ error: "forbidden" });
         }
 
-        const room = `empresa_${empresa_id}`;
+        const room = `empresa_${prpcod}`;
         socket.join(room);
         fastify.log.info(`Socket ${socket.id} joined ${room}`);
         return cb && cb({ ok: true, room });
@@ -75,9 +76,9 @@ export default fp(async (fastify, opts) => {
       }
     });
 
-    socket.on("leave-empresa", (empresa_id) => {
-      if (!empresa_id) return;
-      const room = `empresa_${empresa_id}`;
+    socket.on("leave-empresa", (prpcod) => {
+      if (!prpcod) return;
+      const room = `empresa_${prpcod}`;
       socket.leave(room);
       fastify.log.info(`Socket ${socket.id} left ${room}`);
     });
