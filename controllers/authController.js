@@ -1,5 +1,7 @@
 import authService from "../services/authService.js";
+import proprioFunService from "../services/proprioFunService.js";
 const { login: _login, cadastro: _cadastro } = authService;
+const { create: _createProprioFun, listByFuncionario: _listByFuncionario } = proprioFunService;
 
 const login = async (req, reply) => {
   try {
@@ -130,6 +132,17 @@ const cadastro = async (req, reply) => {
       fundatcad,
       funati,
     });
+
+    const proprioFun = await _createProprioFun({
+      prpcod: result.empresa.prpcod,
+      funcod: result.funcionario.funcod,
+    });
+
+    if (!proprioFun || !proprioFun.prpfuncod) {
+      return reply.status(500).send({ error: "Erro ao associar proprietário e funcionário." });
+    }
+
+    console.log("ProprioFun criado:", proprioFun);
 
     return reply.status(201).send({
       mensagem: "Dados cadastrados",
