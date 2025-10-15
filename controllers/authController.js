@@ -19,10 +19,12 @@ const login = async (req, reply) => {
       empresa: {
         prpcod: result.proprio.prpcod,
         prpdes: result.proprio.prpdes,
+        prpcgc: result.proprio.prpcgc,
       },
       funcionario: {
         funcod: result.funcionario.funcod,
         fundes: result.funcionario.fundes,
+        funcpf: result.funcionario.funcpf,
       },
       movimentacoes: result.movimentacoes,
       token: result.token,

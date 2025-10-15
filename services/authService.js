@@ -35,10 +35,12 @@ const login = async ({ prpcod, funcod, funsen }) => {
     proprio: {
       prpcod: proprio.prpcod,
       prpdes: proprio.prpdes,
+      prpcgc: proprio.prpcgc,
     },
     funcionario: {
       funcod: funcionario.funcod,
       fundes: funcionario.fundes,
+      funcpf: funcionario.funcpf,
     },
     movimentacoes,
     token,
