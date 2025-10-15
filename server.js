@@ -37,9 +37,15 @@ app.register(socketPlugin);
 // Middleware global de autenticação JWT
 app.addHook("onRequest", async (req, reply) => {
   const url = req.raw.url.split("?")[0];
-  const publicRoutes = ["/panel/auth/login", "/panel/auth/cadastro"];
 
-  if (publicRoutes.includes(url)) {
+  const publicRoutes = [
+    /^\/panel\/auth\/login$/,
+    /^\/panel\/auth\/cadastro$/,
+    /^\/panel\/proprio-funcionarios\/funcionario(\/\d+)?$/,
+    /^\/panel\/proprio-funcionarios\/empresa(\/\d+)?$/,
+  ];
+
+  if (publicRoutes.some((pattern) => pattern.test(url))) {
     return;
   }
 
