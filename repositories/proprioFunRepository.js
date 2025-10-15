@@ -25,6 +25,13 @@ const findAllByFuncionario = async (funcod) => {
   });
 };
 
+const findByProprioAndFuncionario = async (prpcod, funcod) => {
+  return ProprioFuncionario.findOne({
+    where: { funcod, prpcod },
+    order: [["PRPFUNCOD", "ASC"]],
+  });
+};
+
 const remove = async (prpfuncod) => {
   const p = await ProprioFuncionario.findByPk(prpfuncod);
   if (!p) return null;
@@ -32,4 +39,4 @@ const remove = async (prpfuncod) => {
   return p;
 };
 
-export default { create, update, findById, findAllByFuncionario, findAllByProprio, remove };
+export default { create, update, findById, findAllByFuncionario, findAllByProprio, findByProprioAndFuncionario, remove };

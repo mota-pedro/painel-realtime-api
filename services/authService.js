@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import funcionarioRepo from "../repositories/funcionarioRepository.js";
 import proprioRepo from "../repositories/proprioRepository.js";
 import movimentacaoRepo from "../repositories/movimentacaoRepository.js";
+import proprioFunRepo from "../repositories/proprioFunRepository.js";
 import { jwtSecret, jwtExpiresIn } from "../utils/jwt.js";
 
 const login = async ({ prpcod, funcod, funsen }) => {
@@ -13,11 +14,8 @@ const login = async ({ prpcod, funcod, funsen }) => {
   const funcionario = await funcionarioRepo.findById(funcod);
   if (!funcionario) throw new Error("Funcionário não encontrado");
 
-  /*
-  if (funcionario.empresa_id !== proprio.id) {
-    throw new Error("Funcionário não pertence à empresa especificada");
-  }
-    */
+  const prpFunc = await proprioFunRepo.findByProprioAndFuncionario(prpcod, funcod);
+  if (!prpFunc) throw new Error("Funcionário não está associado à empresa");
 
   const senhaOk = await bcrypt.compare(funsen, funcionario.funsen);
   if (!senhaOk) throw new Error("Senha incorreta");
