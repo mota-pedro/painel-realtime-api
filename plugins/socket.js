@@ -37,7 +37,7 @@ export default fp(async (fastify, opts) => {
 
       socket.user = {
         funcod: decoded.funcod,
-        prpcod: decoded.prpcod,
+        funcpf: decoded.funcpf,
       };
 
       return next();
@@ -54,27 +54,35 @@ export default fp(async (fastify, opts) => {
     );
 
     // join-empresa
-    socket.on("join-empresa", (prpcod, cb) => {
-      try {
-        if (!socket.user) {
-          return cb && cb({ error: "not_authenticated" });
-        }
-        if (!prpcod) return cb && cb({ error: "prpcod_required" });
+    socket.on("join-empresa", (data, cb) => {
+  try {
+    if (!socket.user) {
+      return cb && cb({ error: "not_authenticated" });
+    }
 
-        if (socket.user.prpcod !== prpcod) {
-          fastify.log.warn("Token invalido");
-          return cb && cb({ error: "forbidden" });
-        }
+    const { prpcod, funcod } = data;
 
-        const room = `empresa_${prpcod}`;
-        socket.join(room);
-        fastify.log.info(`Socket ${socket.id} joined ${room}`);
-        return cb && cb({ ok: true, room });
-      } catch (err) {
-        fastify.log.error(err);
-        return cb && cb({ error: "internal_error" });
-      }
-    });
+    if (!prpcod) return cb && cb({ error: "prpcod_required" });
+    if (!funcod) return cb && cb({ error: "funcod_required" });
+
+    // valida se o funcod do token bate com o enviado
+    if (socket.user.funcod !== funcod) {
+      fastify.log.warn(
+        `Funcod do token (${socket.user.funcod}) diferente do enviado (${funcod})`
+      );
+      return cb && cb({ error: "forbidden" });
+    }
+
+    const room = `empresa_${prpcod}`;
+    socket.join(room);
+    fastify.log.info(`Socket ${socket.id} joined ${room}`);
+    return cb && cb({ ok: true, room });
+  } catch (err) {
+    fastify.log.error(err);
+    return cb && cb({ error: "internal_error" });
+  }
+});
+
 
     socket.on("leave-empresa", (prpcod) => {
       if (!prpcod) return;
