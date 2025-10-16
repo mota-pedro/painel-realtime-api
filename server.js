@@ -43,6 +43,7 @@ app.addHook("onRequest", async (req, reply) => {
     /^\/panel\/auth\/cadastro$/,
     /^\/panel\/proprio-funcionarios\/funcionario(\/\d+)?$/,
     /^\/panel\/proprio-funcionarios\/empresa(\/\d+)?$/,
+    /^\/panel\/empresas\/public(\/\d+)?$/,
   ];
 
   if (publicRoutes.some((pattern) => pattern.test(url))) {
