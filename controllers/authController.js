@@ -5,28 +5,22 @@ const { create: _createProprioFun, listByFuncionario: _listByFuncionario } = pro
 
 const login = async (req, reply) => {
   try {
-    const { prpcod, funcod, funsen } = req.body;
+    const { funcod, funsen } = req.body;
 
-    if (!prpcod || !funcod || !funsen) {
+    if (!funcod || !funsen) {
       return reply
         .status(400)
         .send({ error: "Parâmetros obrigatórios ausentes" });
     }
 
-    const result = await _login({ prpcod, funcod, funsen });
+    const result = await _login({ funcod, funsen });
     console.log("Movimentações da empresa:", result);
     return reply.send({
-      empresa: {
-        prpcod: result.proprio.prpcod,
-        prpdes: result.proprio.prpdes,
-        prpcgc: result.proprio.prpcgc,
-      },
       funcionario: {
         funcod: result.funcionario.funcod,
         fundes: result.funcionario.fundes,
         funcpf: result.funcionario.funcpf,
       },
-      movimentacoes: result.movimentacoes,
       token: result.token,
     });
   } catch (err) {

@@ -3,46 +3,30 @@ import bcrypt from "bcrypt";
 
 import funcionarioRepo from "../repositories/funcionarioRepository.js";
 import proprioRepo from "../repositories/proprioRepository.js";
-import movimentacaoRepo from "../repositories/movimentacaoRepository.js";
-import proprioFunRepo from "../repositories/proprioFunRepository.js";
 import { jwtSecret, jwtExpiresIn } from "../utils/jwt.js";
 
-const login = async ({ prpcod, funcod, funsen }) => {
-  const proprio = await proprioRepo.findById(prpcod);
-  if (!proprio) throw new Error("Empresa não encontrada");
-
+const login = async ({ funcod, funsen }) => {
   const funcionario = await funcionarioRepo.findById(funcod);
   if (!funcionario) throw new Error("Funcionário não encontrado");
-
-  const prpFunc = await proprioFunRepo.findByProprioAndFuncionario(prpcod, funcod);
-  if (!prpFunc) throw new Error("Funcionário não está associado à empresa");
 
   const senhaOk = await bcrypt.compare(funsen, funcionario.funsen);
   if (!senhaOk) throw new Error("Senha incorreta");
 
-  const movimentacoes = await movimentacaoRepo.findAllByProprio(prpcod);
-
   const token = jwt.sign(
     {
       funcod: funcionario.funcod,
-      prpcod: proprio.prpcod,
+      funcpf: funcionario.funcpf,
     },
     jwtSecret,
     { expiresIn: jwtExpiresIn }
   );
 
   return {
-    proprio: {
-      prpcod: proprio.prpcod,
-      prpdes: proprio.prpdes,
-      prpcgc: proprio.prpcgc,
-    },
     funcionario: {
       funcod: funcionario.funcod,
       fundes: funcionario.fundes,
       funcpf: funcionario.funcpf,
     },
-    movimentacoes,
     token,
   };
 };

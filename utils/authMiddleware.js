@@ -13,7 +13,7 @@ export const verifyToken = async (req, reply) => {
 
     req.user = {
       funcod: decoded.funcod,
-      prpcod: decoded.prpcod,
+      funcpf: decoded.funcpf,
     };
   } catch (err) {
     return reply.status(401).send({ error: "Token inválido ou expirado" });
