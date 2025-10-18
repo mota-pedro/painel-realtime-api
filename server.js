@@ -61,6 +61,7 @@ import funcionarioRoutes from "./routes/funcionario.js";
 import proprioRoutes from "./routes/proprio.js";
 import movimentacaoRoutes from "./routes/movimentacao.js";
 import proprioFuncionarioRoutes from "./routes/proprioFuncionario.js";
+import setorRoutes from "./routes/setor.js";
 
 app.register(
   async (fastify) => {
@@ -70,6 +71,7 @@ app.register(
     fastify.register(proprioRoutes, { prefix: "/empresas" });
     fastify.register(movimentacaoRoutes, { prefix: "/movimentacoes" });
     fastify.register(proprioFuncionarioRoutes, { prefix: "/proprio-funcionarios" });
+    fastify.register(setorRoutes, { prefix: "/setores" });
   },
   { prefix: "/panel" }
 );

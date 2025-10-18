@@ -55,33 +55,33 @@ export default fp(async (fastify, opts) => {
 
     // join-empresa
     socket.on("join-empresa", (data, cb) => {
-  try {
-    if (!socket.user) {
-      return cb && cb({ error: "not_authenticated" });
-    }
+      try {
+        if (!socket.user) {
+          return cb && cb({ error: "not_authenticated" });
+        }
 
-    const { prpcod, funcod } = data;
+        const { prpcod, funcod } = data;
 
-    if (!prpcod) return cb && cb({ error: "prpcod_required" });
-    if (!funcod) return cb && cb({ error: "funcod_required" });
+        if (!prpcod) return cb && cb({ error: "prpcod_required" });
+        if (!funcod) return cb && cb({ error: "funcod_required" });
 
-    // valida se o funcod do token bate com o enviado
-    if (socket.user.funcod !== funcod) {
-      fastify.log.warn(
-        `Funcod do token (${socket.user.funcod}) diferente do enviado (${funcod})`
-      );
-      return cb && cb({ error: "forbidden" });
-    }
+        // valida se o funcod do token bate com o enviado
+        if (socket.user.funcod !== funcod) {
+          fastify.log.warn(
+            `Funcod do token (${socket.user.funcod}) diferente do enviado (${funcod})`
+          );
+          return cb && cb({ error: "forbidden" });
+        }
 
-    const room = `empresa_${prpcod}`;
-    socket.join(room);
-    fastify.log.info(`Socket ${socket.id} joined ${room}`);
-    return cb && cb({ ok: true, room });
-  } catch (err) {
-    fastify.log.error(err);
-    return cb && cb({ error: "internal_error" });
-  }
-});
+        const room = `empresa_${prpcod}`;
+        socket.join(room);
+        fastify.log.info(`Socket ${socket.id} joined ${room}`);
+        return cb && cb({ ok: true, room });
+      } catch (err) {
+        fastify.log.error(err);
+        return cb && cb({ error: "internal_error" });
+      }
+    });
 
 
     socket.on("leave-empresa", (prpcod) => {

@@ -61,5 +61,19 @@ Proprio.hasMany(MovimentacaoPainel, {
   as: 'movimentacoesPainel'
 });
 
+// MovimentacaoPainel pertence a uma Funcao
+MovimentacaoPainel.belongsTo(Funcao, {
+  foreignKey: 'fnccod',
+  targetKey: 'fnccod',
+  as: 'funcao'
+});
+
+// Uma Funcao tem muitas MovimentacoesPainel
+Funcao.hasMany(MovimentacaoPainel, {
+  foreignKey: 'fnccod',
+  sourceKey: 'fnccod',
+  as: 'movimentacoesPainel'
+});
+
 export { sequelize, Sequelize };
 export default { Funcionario, MovimentacaoPainel, Proprio, Funcao, ModeloPainel, ProprioFuncionario, SysConfig, Setor };

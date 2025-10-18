@@ -9,7 +9,7 @@ export default (sequelize) => {
       fncdis: { type: DataTypes.CHAR(3), allowNull: true, field: "FNCDIS" },
       fncbot: { type: DataTypes.CHAR(2), allowNull: true, field: "FNCBOT" },
       fncdatcad: { type: DataTypes.DATE, allowNull: true, field: "FNCDATCAD" },
-      setcod: { type: DataTypes.CHAR(5), allowNull: true, field: "SETCOD" },
+      setcod: { type: DataTypes.INTEGER, allowNull: true, field: "SETCOD" },
       arecod: { type: DataTypes.CHAR(5), allowNull: true, field: "ARECOD" },
       pescod: { type: DataTypes.CHAR(5), allowNull: true, field: "PESCOD" },
       fnctmpexp: { type: DataTypes.TIME, allowNull: true, field: "FNCTMPEXP" },

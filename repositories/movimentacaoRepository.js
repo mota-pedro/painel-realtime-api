@@ -10,6 +10,9 @@ const createMovimentacao = async ({
 const updateMovimentacao = async (mpncod, data) => {
   const m = await MovimentacaoPainel.findByPk(mpncod);
   if (!m) return null;
+  if (m.mpndatfin) {
+    throw new Error("Esta movimentação já foi encerrada.");
+  }
   return m.update(data);
 };
 
@@ -31,10 +34,24 @@ const removeMovimentacao = async (mpncod) => {
   return m;
 };
 
+async function findDuplicate({ fnccod, setcod, prpcod, mpnstt }) {
+  return MovimentacaoPainel.findOne({
+    where: {
+      fnccod,
+      prpcod,
+      setcod,
+      mpnstt,
+      mpndatfin: null,
+      mpnhrfin: null
+    }
+  });
+}
+
 export default {
   createMovimentacao,
   updateMovimentacao,
   findById,
   findAllByProprio,
   removeMovimentacao,
+  findDuplicate
 };
