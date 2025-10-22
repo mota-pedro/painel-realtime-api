@@ -40,10 +40,7 @@ app.addHook("onRequest", async (req, reply) => {
 
   const publicRoutes = [
     /^\/panel\/auth\/login$/,
-    /^\/panel\/auth\/cadastro$/,
-    /^\/panel\/proprio-funcionarios\/funcionario(\/\d+)?$/,
-    /^\/panel\/proprio-funcionarios\/empresa(\/\d+)?$/,
-    /^\/panel\/empresas\/public(\/\d+)?$/,
+    /^\/panel\/auth\/cadastro$/
   ];
 
   if (publicRoutes.some((pattern) => pattern.test(url))) {

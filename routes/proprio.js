@@ -7,9 +7,6 @@ export default async function (fastify, opts) {
   // Obter empresa pelo ID
   fastify.get("/:prpcod", proprioController.getById);
 
-  // Obter apenas PRPCOD, PRPDES e PRPCGC da empresa pelo ID
-  fastify.get("/public/:prpcod", proprioController.secureGetById);
-
   // Criar empresa
   fastify.post("/", proprioController.create);
 

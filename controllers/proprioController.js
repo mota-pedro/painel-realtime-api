@@ -77,22 +77,6 @@ const getById = async (req, reply) => {
   }
 };
 
-const secureGetById = async (req, reply) => {
-  try {
-    const { prpcod } = req.params;
-    const proprio = await proprioService.getById(prpcod);
-    if (!proprio) return reply.status(404).send({ error: "not_found" });
-    return reply.send({
-      prpcod: proprio.prpcod,
-      prpdes: proprio.prpdes,
-      prpcgc: proprio.prpcgc ? maskCnpj(proprio.prpcgc) : null,
-    });
-  } catch (err) {
-    req.log.error(err);
-    return reply.status(500).send({ error: err.message });
-  }
-};
-
 const list = async (req, reply) => {
   try {
     const proprios = await proprioService.list();
@@ -114,4 +98,4 @@ const remove = async (req, reply) => {
   }
 };
 
-export default { create, update, getById, secureGetById, list, remove };
+export default { create, update, getById, list, remove };
