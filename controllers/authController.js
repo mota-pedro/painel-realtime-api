@@ -17,6 +17,7 @@ const login = async (req, reply) => {
     console.log("Movimentações da empresa:", result);
     return reply.send({
       funcionario: {
+        funcod: result.funcionario.funcod,
         funlog: result.funcionario.funlog,
         fundes: result.funcionario.fundes,
         funcpf: result.funcionario.funcpf,

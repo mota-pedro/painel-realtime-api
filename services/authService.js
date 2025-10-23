@@ -23,6 +23,7 @@ const login = async ({ funlog, funsen }) => {
 
   return {
     funcionario: {
+      funcod: funcionario.funcod,
       funlog: funcionario.funlog,
       fundes: funcionario.fundes,
       funcpf: funcionario.funcpf,
