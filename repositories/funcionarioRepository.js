@@ -11,6 +11,9 @@ const update = async (funcod, data) => {
 
 const findById = async (funcod) => Funcionario.findByPk(funcod);
 
+const findByLogin = async (funlog) =>
+  Funcionario.findOne({ where: { funlog } });
+
 const findAll = async () =>
   Funcionario.findAll({ order: [["FUNDATCAD", "DESC"]] });
 
@@ -21,4 +24,4 @@ const remove = async (funcod) => {
   return f;
 };
 
-export default { create, update, findById, findAll, remove };
+export default { create, update, findById, findByLogin, findAll, remove };

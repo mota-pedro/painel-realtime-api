@@ -5,8 +5,8 @@ import funcionarioRepo from "../repositories/funcionarioRepository.js";
 import proprioRepo from "../repositories/proprioRepository.js";
 import { jwtSecret, jwtExpiresIn } from "../utils/jwt.js";
 
-const login = async ({ funcod, funsen }) => {
-  const funcionario = await funcionarioRepo.findById(funcod);
+const login = async ({ funlog, funsen }) => {
+  const funcionario = await funcionarioRepo.findByLogin(funlog);
   if (!funcionario) throw new Error("Funcionário não encontrado");
 
   const senhaOk = await bcrypt.compare(funsen, funcionario.funsen);
@@ -23,7 +23,7 @@ const login = async ({ funcod, funsen }) => {
 
   return {
     funcionario: {
-      funcod: funcionario.funcod,
+      funlog: funcionario.funlog,
       fundes: funcionario.fundes,
       funcpf: funcionario.funcpf,
     },
