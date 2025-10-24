@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  return sequelize.define(
+  const Proprio = sequelize.define(
     "Proprio",
     {
       prpcod: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: "PRPCOD" },
@@ -32,4 +32,64 @@ export default (sequelize) => {
       underscored: true,
     }
   );
+
+  Proprio.mapearParaJson = (dados) => {
+    if (!dados) return null;
+
+    const mapear = (p) => ({
+      id: p.prpcod,
+      nome: p.prpdes,
+      nomeFantasia: p.prpfan,
+      cnpj: p.prpcgc,
+      rgIe: p.prpierg,
+      inscricaoMunicipal: p.prpincmun,
+      endereco: p.prpend,
+      complemento: p.prpcmp,
+      numero: p.prpnum,
+      bairro: p.prpbai,
+      municipio: p.prpmun,
+      uf: p.prpuf,
+      cep: p.prpcep,
+      codigoIbge: p.prpcodibge,
+      telefone: p.prptel,
+      email: p.prpemail,
+      responsavel: p.prpresp,
+      logo: p.prplogo,
+      observacao: p.prpobs,
+      dataCadastro: p.prpdatcad,
+      modeloPainelId: p.modpnlcod,
+    });
+
+    return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
+  };
+
+  Proprio.fromJson = (json) => {
+    if (!json) return null;
+
+    return {
+      prpcod: json.id,
+      prpdes: json.nome,
+      prpfan: json.nomeFantasia,
+      prpcgc: json.cnpj,
+      prpierg: json.rgIe,
+      prpincmun: json.inscricaoMunicipal,
+      prpend: json.endereco,
+      prpcmp: json.complemento,
+      prpnum: json.numero,
+      prpbai: json.bairro,
+      prpmun: json.municipio,
+      prpuf: json.uf,
+      prpcep: json.cep,
+      prpcodibge: json.codigoIbge,
+      prptel: json.telefone,
+      prpemail: json.email,
+      prpresp: json.responsavel,
+      prplogo: json.logo,
+      prpobs: json.observacao,
+      prpdatcad: json.dataCadastro,
+      modpnlcod: json.modeloPainelId,
+    };
+  };
+
+  return Proprio;
 };

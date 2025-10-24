@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 
 export default (sequelize) => {
-    return sequelize.define(
+    const ProprioFuncionario = sequelize.define(
         "ProprioFuncionario",
         {
             prpfuncod: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: "PRPFUNCOD"},
@@ -14,4 +14,28 @@ export default (sequelize) => {
             underscored: true,
         }
     );
+
+    ProprioFuncionario.mapearParaJson = (dados) => {
+    if (!dados) return null;
+
+    const mapear = (p) => ({
+      id: p.prpfuncod,
+      empresaId: p.prpcod,
+      funcionarioId: p.funcod,
+    });
+
+    return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
+  };
+
+    ProprioFuncionario.fromJson = (json) => {
+    if (!json) return null;
+
+    return {
+        prpfuncod: json.id,
+        prpcod: json.empresaId,
+        funcod: json.funcionarioId,
+    };
+    };
+
+    return ProprioFuncionario;
 };

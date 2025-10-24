@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  return sequelize.define(
+  const MovimentacaoPainel = sequelize.define(
     "MovimentacaoPainel",
     {
       mpncod: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: "MPNCOD" },
@@ -21,4 +21,42 @@ export default (sequelize) => {
       underscored: true,
     }
   );
+
+  MovimentacaoPainel.mapearParaJson = (dados) => {
+    if (!dados) return null;
+
+    const mapear = (m) => ({
+      id: m.mpncod,
+      data: m.mpndat,
+      hora: m.mpnhr,
+      funcaoId: m.fnccod,
+      status: m.mpnstt,
+      dataFim: m.mpndatfin,
+      horaFim: m.mpnhrfin,
+      finalizacaoId: m.mpncodfin,
+      setorId: m.setcod,
+      empresaId: m.prpcod,
+    });
+
+    return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
+  };
+
+  MovimentacaoPainel.fromJson = (json) => {
+    if (!json) return null;
+
+    return {
+      mpncod: json.id,
+      mpndat: json.data,
+      mpnhr: json.hora,
+      fnccod: json.funcaoId,
+      mpnstt: json.status,
+      mpndatfin: json.dataFim,
+      mpnhrfin: json.horaFim,
+      mpncodfin: json.finalizacaoId,
+      setcod: json.setorId,
+      prpcod: json.empresaId,
+    };
+  };
+
+  return MovimentacaoPainel;
 };

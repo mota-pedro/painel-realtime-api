@@ -1,11 +1,17 @@
 import authService from "../services/authService.js";
 import proprioFunService from "../services/proprioFunService.js";
+import models from "../models/modelos.js";
+const { Funcionario, Proprio } = models;
 const { login: _login, cadastro: _cadastro } = authService;
 const { create: _createProprioFun, listByFuncionario: _listByFuncionario } = proprioFunService;
 
 const login = async (req, reply) => {
   try {
-    const { funlog, funsen } = req.body;
+
+    console.log(`REQ JSON: ${JSON.stringify(req.body)}`);
+    console.log(`REQ FROM JSON: ${JSON.stringify(Funcionario.fromJson(req.body))}`);
+
+    const { funlog, funsen } = Funcionario.fromJson(req.body);
 
     if (!funlog || !funsen) {
       return reply
@@ -14,13 +20,15 @@ const login = async (req, reply) => {
     }
 
     const result = await _login({ funlog, funsen });
+    const funcionario = Funcionario.mapearParaJson(result.funcionario);
+
     console.log("Movimentações da empresa:", result);
     return reply.send({
       funcionario: {
-        funcod: result.funcionario.funcod,
-        funlog: result.funcionario.funlog,
-        fundes: result.funcionario.fundes,
-        funcpf: result.funcionario.funcpf,
+        id: funcionario.id,
+        login: funcionario.login,
+        nome: funcionario.nome,
+        cpf: funcionario.cpf,
       },
       token: result.token,
     });
@@ -31,8 +39,8 @@ const login = async (req, reply) => {
 };
 
 const cadastro = async (req, reply) => {
-  try {
-    const {
+    try {
+      const {
       prpdes, 
       prpfan, 
       prpcgc, 
@@ -52,7 +60,10 @@ const cadastro = async (req, reply) => {
       prplogo,
       prpobs,
       prpdatcad,
-      modpnlcod,
+      modpnlcod
+    } = Proprio.fromJson(req.body.empresa);
+
+    const {
       fundes,
       funcpf,
       funrg,
@@ -71,22 +82,21 @@ const cadastro = async (req, reply) => {
       funlog,
       funsen,
       fundatcad,
-      funati,
-    } = req.body;
+      funati
+    } = Funcionario.fromJson(req.body.funcionario);
 
-    /*
     if (
-      !empresa_nome ||
-      !empresa_cnpj ||
-      !usuario_nome ||
-      !usuario_email ||
-      !usuario_senha
+      !prpdes ||
+      !prpcgc ||
+      !fundes ||
+      !funcpf ||
+      !funlog ||
+      !funsen
     ) {
       return reply
         .status(400)
         .send({ error: "Campos obrigatórios ausentes no cadastro." });
     }
-        */
 
     const result = await _cadastro({
       prpdes, 
@@ -143,8 +153,8 @@ const cadastro = async (req, reply) => {
 
     return reply.status(201).send({
       mensagem: "Dados cadastrados",
-      empresa: result.empresa,
-      funcionario: result.funcionario,
+      empresa_id: result.empresa.prpcod,
+      funcionario_id: result.funcionario.funcod,
     });
   } catch (err) {
     req.log.error(err);

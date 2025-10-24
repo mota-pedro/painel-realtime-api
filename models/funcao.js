@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  return sequelize.define(
+  const Funcao = sequelize.define(
     "Funcao",
     {
       fnccod: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: "FNCCOD" },
@@ -22,4 +22,44 @@ export default (sequelize) => {
       underscored: true,
     }
   );
+
+  Funcao.mapearParaJson = (dados) => {
+    if (!dados) return null;
+
+    const mapear = (f) => ({
+      id: f.fnccod,
+      nome: f.fncdes,
+      dispositivo: f.fncdis,
+      botao: f.fncbot,
+      dataCadastro: f.fncdatcad,
+      setorId: f.setcod,
+      areaId: f.arecod,
+      pessoaId: f.pescod,
+      tempoExpiracao: f.fnctmpexp,
+      botaoFechamento: f.fncbotfec,
+      digitoVerificador: f.fncdigver,
+    });
+
+    return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
+  };
+
+  Funcao.fromJson = (json) => {
+    if (!json) return null;
+
+    return {
+      fnccod: json.id,
+      fncdes: json.nome,
+      fncdis: json.dispositivo,
+      fncbot: json.botao,
+      fncdatcad: json.dataCadastro,
+      setcod: json.setorId,
+      arecod: json.areaId,
+      pescod: json.pessoaId,
+      fnctmpexp: json.tempoExpiracao,
+      fncbotfec: json.botaoFechamento,
+      fncdigver: json.digitoVerificador,
+    };
+  };
+
+  return Funcao;
 };

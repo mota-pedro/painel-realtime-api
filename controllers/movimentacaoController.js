@@ -1,26 +1,21 @@
 import movimentacaoService from "../services/movimentacaoService.js";
+import modelos from "../models/modelos.js";
+
+const { MovimentacaoPainel } = modelos;
 
 const create = async (req, reply) => {
   try {
-    const { 
-        mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, mpncodfin, setcod, prpcod 
-    } = req.body;
-    const created = await movimentacaoService.handleIncomingMovimentacao(
-      {mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, mpncodfin, setcod, prpcod},
-      req.server
-    );
-    return reply.send({
-      mpncod: created.mpncod, 
-      mpndat: created.mpndat, 
-      mpnhr: created.mpnhr, 
-      fnccod: created.fnccod, 
-      mpnstt: created.mpnstt, 
-      mpndatfin: created.mpndatfin, 
-      mpnhrfin: created.mpnhrfin, 
-      mpncodfin: created.mpncodfin, 
-      setcod: created.setcod, 
-      prpcod: created.prpcod 
-    });
+    const payload = MovimentacaoPainel && typeof MovimentacaoPainel.fromJson === "function"
+      ? MovimentacaoPainel.fromJson(req.body)
+      : req.body;
+
+    const created = await movimentacaoService.handleIncomingMovimentacao(payload, req.server);
+
+    const result = MovimentacaoPainel && typeof MovimentacaoPainel.mapearParaJson === "function"
+      ? MovimentacaoPainel.mapearParaJson(created)
+      : created;
+
+    return reply.send(result);
   } catch (err) {
     req.log.error(err);
     return reply.status(400).send({ error: err.message });
@@ -30,9 +25,17 @@ const create = async (req, reply) => {
 const update = async (req, reply) => {
   try {
     const { mpncod } = req.params;
-    const data = req.body;
+    const data = MovimentacaoPainel && typeof MovimentacaoPainel.fromJson === "function"
+      ? MovimentacaoPainel.fromJson(req.body)
+      : req.body;
+
     const updated = await movimentacaoService.update(mpncod, data);
-    return reply.send(updated);
+
+    const result = MovimentacaoPainel && typeof MovimentacaoPainel.mapearParaJson === "function"
+      ? MovimentacaoPainel.mapearParaJson(updated)
+      : updated;
+
+    return reply.send(result);
   } catch (err) {
     req.log.error(err);
     return reply.status(400).send({ error: err.message });
@@ -43,7 +46,12 @@ const listByProprio = async (req, reply) => {
   try {
     const { prpcod } = req.params;
     const rows = await movimentacaoService.listByProprio(prpcod);
-    return reply.send(rows);
+
+    const result = MovimentacaoPainel && typeof MovimentacaoPainel.mapearParaJson === "function"
+      ? MovimentacaoPainel.mapearParaJson(rows)
+      : rows;
+
+    return reply.send(result);
   } catch (err) {
     req.log.error(err);
     return reply.status(500).send({ error: err.message });
@@ -55,7 +63,12 @@ const getById = async (req, reply) => {
     const { mpncod } = req.params;
     const m = await movimentacaoService.getById(mpncod);
     if (!m) return reply.status(404).send({ error: "not_found" });
-    return reply.send(m);
+
+    const result = MovimentacaoPainel && typeof MovimentacaoPainel.mapearParaJson === "function"
+      ? MovimentacaoPainel.mapearParaJson(m)
+      : m;
+
+    return reply.send(result);
   } catch (err) {
     req.log.error(err);
     return reply.status(500).send({ error: err.message });

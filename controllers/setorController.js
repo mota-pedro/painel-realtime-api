@@ -1,14 +1,23 @@
 import setorService from "../services/setorService.js";
+import modelos from "../models/modelos.js";
+
+const { Setor } = modelos;
+
+const mapResult = (obj) => {
+  if (!obj) return obj;
+  if (Setor && typeof Setor.mapearParaJson === "function") return Setor.mapearParaJson(obj);
+  if (Array.isArray(obj)) return obj.map((o) => (o && typeof o.toJSON === "function" ? o.toJSON() : o));
+  return obj && typeof obj.toJSON === "function" ? obj.toJSON() : obj;
+};
 
 const create = async (req, reply) => {
   try {
-    const { 
-      setdes, setdatcad 
-    } = req.body;
-    const created = await setorService.create({
-      setdes, setdatcad
-    });
-    return reply.send(created);
+    const payload = Setor && typeof Setor.fromJson === "function"
+      ? Setor.fromJson(req.body)
+      : req.body;
+
+    const created = await setorService.create(payload);
+    return reply.send(mapResult(created));
   } catch (err) {
     req.log.error(err);
     return reply.status(400).send({ error: err.message });
@@ -18,9 +27,12 @@ const create = async (req, reply) => {
 const update = async (req, reply) => {
   try {
     const { setcod } = req.params;
-    const data = req.body;
+    const data = Setor && typeof Setor.fromJson === "function"
+      ? Setor.fromJson(req.body)
+      : req.body;
+
     const updated = await setorService.update(setcod, data);
-    return reply.send(updated);
+    return reply.send(mapResult(updated));
   } catch (err) {
     req.log.error(err);
     return reply.status(400).send({ error: err.message });
@@ -32,7 +44,7 @@ const getById = async (req, reply) => {
     const { setcod } = req.params;
     const f = await setorService.getById(setcod);
     if (!f) return reply.status(404).send({ error: "not_found" });
-    return reply.send(f);
+    return reply.send(mapResult(f));
   } catch (err) {
     req.log.error(err);
     return reply.status(500).send({ error: err.message });

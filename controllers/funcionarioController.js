@@ -1,54 +1,31 @@
-import funcionarioService from "../services/funcaoService.js";
+import modelos from "../models/modelos.js";
+import funcionarioService from "../services/funcionarioService.js";
+
+const { Funcionario } = modelos;
+
+const sanitizeSenha = (obj) => {
+  if (!obj) return obj;
+  if (Array.isArray(obj)) return obj.map((o) => { const c = { ...o }; delete c.funsen; return c; });
+  const copy = { ...obj };
+  delete copy.funsen;
+  return copy;
+};
 
 const create = async (req, reply) => {
   try {
-    const {   
-      fundes,
-      funcpf,
-      funrg,
-      funend,
-      funbai,
-      funcmp,
-      funnum,
-      funmun,
-      funuf,
-      funcep,
-      funcodibge,
-      funtel,
-      funemail,
-      funfotdoc,
-      funobs,
-      funlog,
-      funsen,
-      fundatcad,
-      funati 
-    } = req.body;
-    let funcionario = await funcionarioService.create({
-      fundes,
-      funcpf,
-      funrg,
-      funend,
-      funbai,
-      funcmp,
-      funnum,
-      funmun,
-      funuf,
-      funcep,
-      funcodibge,
-      funtel,
-      funemail,
-      funfotdoc,
-      funobs,
-      funlog,
-      funsen,
-      fundatcad,
-      funati 
-    });
+    const payload = Funcionario && typeof Funcionario.fromJson === "function"
+      ? Funcionario.fromJson(req.body)
+      : req.body;
 
-    funcionario = funcionario.toJSON();
-    delete funcionario.funsen;
+    let funcionario = await funcionarioService.create(payload);
 
-    return reply.send(funcionario);
+    // aceitar instância do Sequelize ou objeto plain
+    const mapped = Funcionario && typeof Funcionario.mapearParaJson === "function"
+      ? Funcionario.mapearParaJson(funcionario)
+      : (funcionario && typeof funcionario.toJSON === "function" ? funcionario.toJSON() : funcionario);
+
+    const result = sanitizeSenha(mapped);
+    return reply.send(result);
   } catch (err) {
     req.log.error(err);
     return reply.status(400).send({ error: err.message });
@@ -58,10 +35,18 @@ const create = async (req, reply) => {
 const update = async (req, reply) => {
   try {
     const { funcod } = req.params;
-    let funcionario = await funcionarioService.update(funcod, req.body);
-    funcionario = funcionario.toJSON();
-    delete funcionario.funsen;
-    return reply.send(funcionario);
+    const data = Funcionario && typeof Funcionario.fromJson === "function"
+      ? Funcionario.fromJson(req.body)
+      : req.body;
+
+    let funcionario = await funcionarioService.update(funcod, data);
+
+    const mapped = Funcionario && typeof Funcionario.mapearParaJson === "function"
+      ? Funcionario.mapearParaJson(funcionario)
+      : (funcionario && typeof funcionario.toJSON === "function" ? funcionario.toJSON() : funcionario);
+
+    const result = sanitizeSenha(mapped);
+    return reply.send(result);
   } catch (err) {
     req.log.error(err);
     return reply.status(400).send({ error: err.message });
@@ -74,7 +59,12 @@ const getById = async (req, reply) => {
     const funcionario = await funcionarioService.getById(funcod);
     if (!funcionario)
       return reply.status(404).send({ error: "Funcionário não encontrado" });
-    return reply.send(funcionario);
+
+    const mapped = Funcionario && typeof Funcionario.mapearParaJson === "function"
+      ? Funcionario.mapearParaJson(funcionario)
+      : (funcionario && typeof funcionario.toJSON === "function" ? funcionario.toJSON() : funcionario);
+
+    return reply.send(sanitizeSenha(mapped));
   } catch (err) {
     req.log.error(err);
     return reply.status(500).send({ error: err.message });
@@ -84,7 +74,14 @@ const getById = async (req, reply) => {
 const list = async (req, reply) => {
   try {
     const funcionarios = await funcionarioService.list();
-    return reply.send(funcionarios);
+
+    const mapped = Funcionario && typeof Funcionario.mapearParaJson === "function"
+      ? Funcionario.mapearParaJson(funcionarios)
+      : (Array.isArray(funcionarios)
+        ? funcionarios.map((f) => (f && typeof f.toJSON === "function" ? f.toJSON() : f))
+        : funcionarios);
+
+    return reply.send(sanitizeSenha(mapped));
   } catch (err) {
     req.log.error(err);
     return reply.status(500).send({ error: err.message });

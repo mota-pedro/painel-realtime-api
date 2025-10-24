@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  return sequelize.define(
+  const Funcionario = sequelize.define(
     "Funcionario",
     {
       funcod: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: "FUNCOD" },
@@ -31,4 +31,62 @@ export default (sequelize) => {
       underscored: true,
     }
   );
+
+  Funcionario.mapearParaJson = (dados) => {
+    if (!dados) return null;
+
+    const mapear = (f) => ({
+      id: f.funcod,
+      nome: f.fundes,
+      cpf: f.funcpf,
+      rg: f.funrg,
+      endereco: f.funend,
+      bairro: f.funbai,
+      complemento: f.funcmp,
+      numero: f.funnum,
+      municipio: f.funmun,
+      uf: f.funuf,
+      cep: f.funcep,
+      codigoIbge: f.funcodibge,
+      telefone: f.funtel,
+      email: f.funemail,
+      fotoDocumento: f.funfotdoc,
+      observacao: f.funobs,
+      login: f.funlog,
+      senha: f.funsen,
+      dataCadastro: f.fundatcad,
+      ativo: f.funati === "S",
+    });
+
+    return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
+  };
+
+  Funcionario.fromJson = (json) => {
+    if (!json) return null;
+
+    return {
+      funcod: json.id,
+      fundes: json.nome,
+      funcpf: json.cpf,
+      funrg: json.rg,
+      funend: json.endereco,
+      funbai: json.bairro,
+      funcmp: json.complemento,
+      funnum: json.numero,
+      funmun: json.municipio,
+      funuf: json.uf,
+      funcep: json.cep,
+      funcodibge: json.codigoIbge,
+      funtel: json.telefone,
+      funemail: json.email,
+      funfotdoc: json.fotoDocumento,
+      funobs: json.observacao,
+      funlog: json.login,
+      funsen: json.senha,
+      fundatcad: json.dataCadastro,
+      funati: json.ativo ? "S" : "N",
+    };
+  };
+
+  return Funcionario;
 };
