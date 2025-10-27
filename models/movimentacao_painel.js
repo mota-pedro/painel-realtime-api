@@ -46,8 +46,8 @@ export default (sequelize) => {
 
     return {
       mpncod: json.id,
-      mpndat: json.data,
-      mpnhr: json.hora,
+      mpndat: json.data ?? new Date().toISOString().split("T")[0],
+      mpnhr: json.hora ?? new Date().toISOString().split("T")[1].split(".")[0],
       fnccod: json.funcaoId,
       mpnstt: json.status ?? 'A',
       mpndatfin: json.dataFim ?? null,

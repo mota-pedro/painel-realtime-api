@@ -77,32 +77,26 @@ const handleIncomingMovimentacao = async (
       prpcod,
     });
 
+    const updatedMovimentacoes = [];
     for (const movimentacao of movimentacoesAbertas) {
-      try {
-        const updated = await movimentacaoRepo.updateMovimentacao(movimentacao.mpncod, {
-          mpndatfin: formattedDate,
-          mpnhrfin: formattedTime,
-          mpnstt: 'F',
-          mpncodfin: saved.mpncod,
-        });
-
-        fastify.emitToEmpresa(prpcod, "movimentacao_fechada", {
-          id: updated.mpncod,
-          mpndat: updated.mpndat,
-          mpnhr: updated.mpnhr,
-          mpnstt: updated.mpnstt,
-          mpndatfin: updated.mpndatfin,
-          mpnhrfin: updated.mpnhrfin,
-          prpcod,
-          fnccod: func.fnccod,
-          fncdes: func.fncdes,
-          setcod: setor.setcod,
-          setdes: setor.setdes,
-        });
-      } catch (err) {
-        fastify.log.warn(`Falha ao fechar movimentação ${movimentacao.mpncod}: ${err.message}`);
-      }
+      const updated = await movimentacaoRepo.updateMovimentacao(movimentacao.mpncod, {
+        mpndatfin: formattedDate,
+        mpnhrfin: formattedTime,
+        mpnstt: 'F',
+        mpncodfin: saved.mpncod,
+      });
+      updatedMovimentacoes.push(updated);
     }
+
+    console.log("MOVIMENTACOES ATUALIZADAS: ", JSON.stringify(updatedMovimentacoes));
+
+    fastify.emitToEmpresa(prpcod, "movimentacao_fechada", {
+      movimentacoes: updatedMovimentacoes.map(m => ({
+        id: m.mpncod,
+        mpndatfin: m.mpndatfin,
+        mpnhrfin: m.mpnhrfin,
+      }))
+    });
 
     const updatedFechamento = await movimentacaoRepo.updateMovimentacao(saved.mpncod, {
       mpncodfin: saved.mpncod
