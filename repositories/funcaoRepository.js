@@ -2,9 +2,9 @@ import models from "../models/modelos.js";
 const { Funcao } = models;
 
 const createFuncao = async ({ 
-  fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver
+  fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver, prpcod
 }) => {
-  return Funcao.create({ fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver });
+  return Funcao.create({ fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver, prpcod });
 };
 
 const updateFuncao = async (fnccod, data) => {
@@ -24,6 +24,13 @@ const findAllBySetor = async (setcod) => {
   });
 };
 
+const findAllByProprio = async (prpcod) => {
+  return Funcao.findAll({
+    where: { prpcod },
+    order: [["PRPCOD", "ASC"]],
+  });
+};
+
 const removeFuncao = async (fnccod) => {
   const f = await Funcao.findByPk(fnccod);
   if (!f) return null;
@@ -37,4 +44,5 @@ export default {
   findById,
   findAllBySetor,
   removeFuncao,
+  findAllByProprio
 };

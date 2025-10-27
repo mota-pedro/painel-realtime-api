@@ -1,7 +1,7 @@
 import funcRepo from "../repositories/funcaoRepository.js";
 
-const create = async ({ fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver }) => {
-  return funcRepo.createFuncao({ fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver });
+const create = async ({ fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver, prpcod }) => {
+  return funcRepo.createFuncao({ fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver, prpcod });
 };
 
 const update = async (fnccod, data) => {
@@ -16,6 +16,12 @@ const listBySetor = async (setcod) => {
   return funcoes;
 };
 
+const listByProprio = async (prpcod) => {
+  const funcoes = await funcRepo.findAllByProprio(prpcod);
+  if (!funcoes) throw new Error("Nenhuma função encontrada para este proprietário");
+  return funcoes;
+};
+
 const getById = async (fnccod) => {
   return funcRepo.findById(fnccod);
 };
@@ -26,4 +32,4 @@ const remove = async (fnccod) => {
   return removed;
 };
 
-export default { create, update, listBySetor, getById, remove };
+export default { create, update, listBySetor, listByProprio, getById, remove };

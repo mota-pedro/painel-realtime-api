@@ -15,6 +15,7 @@ export default (sequelize) => {
       fnctmpexp: { type: DataTypes.TIME, allowNull: true, field: "FNCTMPEXP" },
       fncbotfec: { type: DataTypes.CHAR(1), allowNull: true, field: "FNCBOTFEC" },
       fncdigver: { type: DataTypes.CHAR(3), allowNull: true, field: "FNCDIGVER" },
+      prpcod: { type: DataTypes.INTEGER, allowNull: false, field: "PRPCOD" },
     },
     {
       tableName: "funcao",
@@ -38,6 +39,7 @@ export default (sequelize) => {
       tempoExpiracao: f.fnctmpexp ?? null,
       botaoFechamento: f.fncbotfec,
       digitoVerificador: f.fncdigver ?? null,
+      empresaId: f.prpcod,
     });
 
     return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
@@ -58,6 +60,7 @@ export default (sequelize) => {
       fnctmpexp: json.tempoExpiracao ?? null,
       fncbotfec: json.botaoFechamento,
       fncdigver: json.digitoVerificador ?? null,
+      prpcod: json.empresaId,
     };
   };
 

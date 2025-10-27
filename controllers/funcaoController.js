@@ -48,6 +48,18 @@ const listBySetor = async (req, reply) => {
   }
 };
 
+const listByProprio = async (req, reply) => {
+  try {
+    const { prpcod } = req.params;
+    const rows = await funcService.listByProprio(prpcod);
+    const result = Funcao.mapearParaJson(rows);
+    return reply.send(result);
+  } catch (err) {
+    req.log.error(err);
+    return reply.status(500).send({ error: err.message });
+  }
+};
+
 const getById = async (req, reply) => {
   try {
     const { fnccod } = req.params;
@@ -74,4 +86,4 @@ const remove = async (req, reply) => {
   }
 };
 
-export default { create, update, listBySetor, getById, remove };
+export default { create, update, listBySetor, listByProprio, getById, remove };
