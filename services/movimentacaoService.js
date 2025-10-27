@@ -3,51 +3,51 @@ import setorRepo from "../repositories/setorRepository.js";
 import funcaoRepo from "../repositories/funcaoRepository.js";
 
 const handleIncomingMovimentacao = async (
-  { mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, mpncodfin, setcod, prpcod },
+  { mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, setcod, prpcod },
   fastify
 ) => {
   if (!prpcod) throw new Error("prpcod é obrigatório");
   if (!fnccod) throw new Error("fnccod é obrigatório");
+  if (!setcod) throw new Error("setcod é obrigatório");
 
   const func = await funcaoRepo.findById(fnccod);
-  if (!func) {
-    throw new Error("Função (fnccod) não encontrada");
-  }
+  if (!func) throw new Error("Função (fnccod) não encontrada");
 
-  let setor = null;
-  if (setcod) {
-    setor = await setorRepo.findById(setcod);
-    if (!setor) {
-      throw new Error("Setor (setcod) não encontrado");
+  const setor = await setorRepo.findById(setcod);
+  if (!setor) throw new Error("Setor (setcod) não encontrado");
+
+  if (func.fncbotfec === 'N') {
+    const existeAberta = await movimentacaoRepo.findDuplicate({
+      fnccod,
+      setcod,
+      prpcod,
+      mpnstt: 'A',
+    });
+
+    if (existeAberta) {
+      throw new Error("Já existe uma movimentação aberta para esta função ou painel");
     }
-  }
 
-  const movimentacaoExists = await movimentacaoRepo.findDuplicate({
-    fnccod,
-    setcod,
-    prpcod,
-    mpnstt
-  });
-  if (movimentacaoExists) {
-    throw new Error("Esta movimentação ainda está aberta, finalize-a antes de chamá-la novamente");
-  }
+    const saved = await movimentacaoRepo.createMovimentacao({
+      mpndat,
+      mpnhr,
+      fnccod,
+      mpnstt,
+      mpndatfin: null,
+      mpnhrfin: null,
+      mpncodfin: null,
+      setcod,
+      prpcod,
+    });
 
-  const saved = await movimentacaoRepo.createMovimentacao({
-    mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, mpncodfin, setcod, prpcod
-  });
-
-  fastify.emitToEmpresa(prpcod, "movimentacao", {
-      id: saved.mpncod, 
-      mpndat, 
-      mpnhr, 
-      mpnstt, 
-      mpndatfin, 
-      mpnhrfin, 
-      mpncodfin, 
+    fastify.emitToEmpresa(prpcod, "movimentacao_aberta", {
+      id: saved.mpncod,
+      mpndat,
+      mpnhr,
+      mpnstt,
       prpcod,
       fnccod: func.fnccod,
       fncdes: func.fncdes,
-      fncsetcod: func.setcod,
       fncdis: func.fncdis,
       fncbot: func.fncbot,
       fncbotfec: func.fncbotfec,
@@ -55,12 +55,65 @@ const handleIncomingMovimentacao = async (
       fncdigver: func.fncdigver,
       arecod: func.arecod,
       pescod: func.pescod,
-      setcod: setor ? setor.setcod : null,
-      setdes: setor ? setor.setdes : null,
-  });
+      setcod: setor.setcod,
+      setdes: setor.setdes,
+    });
 
-  return saved;
-}
+    return saved;
+  }
+
+  if (func.fncbotfec === 'S') {
+    const movimentacoesAbertas = await movimentacaoRepo.findAllBySetor(setcod);
+    const formattedDate = (mpndatfin || new Date()).toISOString().split('T')[0]
+    const formattedTime = (mpnhrfin || new Date()).toTimeString().split(' ')[0];
+
+    const saved = await movimentacaoRepo.createMovimentacao({
+      mpndat,
+      mpnhr,
+      fnccod,
+      mpnstt: "F",
+      mpndatfin: formattedDate,
+      mpnhrfin: formattedTime,
+      setcod,
+      prpcod,
+    });
+
+    for (const movimentacao of movimentacoesAbertas) {
+      try {
+        const updated = await movimentacaoRepo.updateMovimentacao(movimentacao.mpncod, {
+          mpndatfin: formattedDate,
+          mpnhrfin: formattedTime,
+          mpnstt: 'F',
+          mpncodfin: saved.mpncod,
+        });
+
+        fastify.emitToEmpresa(prpcod, "movimentacao_fechada", {
+          id: updated.mpncod,
+          mpndat: updated.mpndat,
+          mpnhr: updated.mpnhr,
+          mpnstt: updated.mpnstt,
+          mpndatfin: updated.mpndatfin,
+          mpnhrfin: updated.mpnhrfin,
+          prpcod,
+          fnccod: func.fnccod,
+          fncdes: func.fncdes,
+          setcod: setor?.setcod ?? null,
+          setdes: setor?.setdes ?? null,
+        });
+      } catch (err) {
+        fastify.log.warn(`Falha ao fechar movimentação ${movimentacao.mpncod}: ${err.message}`);
+      }
+    }
+
+    const updatedFechamento = await movimentacaoRepo.updateMovimentacao(saved.mpncod, {
+      mpncodfin: saved.mpncod
+    })
+
+    return updatedFechamento;
+  }
+
+  throw new Error("Erro ao processar chamado");
+};
 
 const update = async (mpncod, data) => {
   const updated = await movimentacaoRepo.updateMovimentacao(mpncod, data);
@@ -68,13 +121,9 @@ const update = async (mpncod, data) => {
   return updated;
 };
 
-const listByProprio = async (prpcod) => {
-  return movimentacaoRepo.findAllByProprio(prpcod);
-};
+const listByProprio = async (prpcod) => movimentacaoRepo.findAllByProprio(prpcod);
 
-const getById = async (mpncod) => {
-  return movimentacaoRepo.findById(mpncod);
-};
+const getById = async (mpncod) => movimentacaoRepo.findById(mpncod);
 
 const remove = async (mpncod) => {
   const removed = await movimentacaoRepo.removeMovimentacao(mpncod);

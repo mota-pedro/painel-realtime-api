@@ -10,9 +10,6 @@ const createMovimentacao = async ({
 const updateMovimentacao = async (mpncod, data) => {
   const m = await MovimentacaoPainel.findByPk(mpncod);
   if (!m) return null;
-  if (m.mpndatfin) {
-    throw new Error("Esta movimentação já foi encerrada.");
-  }
   return m.update(data);
 };
 
@@ -24,6 +21,15 @@ const findAllByProprio = async (prpcod) => {
   return MovimentacaoPainel.findAll({
     where: { prpcod },
     order: [["PRPCOD", "ASC"]],
+  });
+};
+
+const findAllBySetor = async (setcod) => {
+  return MovimentacaoPainel.findAll({
+    where: {
+      setcod,
+      mpnstt: 'A',
+    },
   });
 };
 
@@ -53,5 +59,6 @@ export default {
   findById,
   findAllByProprio,
   removeMovimentacao,
-  findDuplicate
+  findDuplicate,
+  findAllBySetor
 };
