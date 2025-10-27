@@ -5,15 +5,11 @@ const { MovimentacaoPainel } = modelos;
 
 const create = async (req, reply) => {
   try {
-    const payload = MovimentacaoPainel && typeof MovimentacaoPainel.fromJson === "function"
-      ? MovimentacaoPainel.fromJson(req.body)
-      : req.body;
+    const payload = MovimentacaoPainel.fromJson(req.body);
 
     const created = await movimentacaoService.handleIncomingMovimentacao(payload, req.server);
 
-    const result = MovimentacaoPainel && typeof MovimentacaoPainel.mapearParaJson === "function"
-      ? MovimentacaoPainel.mapearParaJson(created)
-      : created;
+    const result = MovimentacaoPainel.mapearParaJson(created);
 
     return reply.send(result);
   } catch (err) {
@@ -25,15 +21,11 @@ const create = async (req, reply) => {
 const update = async (req, reply) => {
   try {
     const { mpncod } = req.params;
-    const data = MovimentacaoPainel && typeof MovimentacaoPainel.fromJson === "function"
-      ? MovimentacaoPainel.fromJson(req.body)
-      : req.body;
+    const data = MovimentacaoPainel.fromJson(req.body);
 
     const updated = await movimentacaoService.update(mpncod, data);
 
-    const result = MovimentacaoPainel && typeof MovimentacaoPainel.mapearParaJson === "function"
-      ? MovimentacaoPainel.mapearParaJson(updated)
-      : updated;
+    const result = MovimentacaoPainel.mapearParaJson(updated);
 
     return reply.send(result);
   } catch (err) {
@@ -47,9 +39,7 @@ const listByProprio = async (req, reply) => {
     const { prpcod } = req.params;
     const rows = await movimentacaoService.listByProprio(prpcod);
 
-    const result = MovimentacaoPainel && typeof MovimentacaoPainel.mapearParaJson === "function"
-      ? MovimentacaoPainel.mapearParaJson(rows)
-      : rows;
+    const result = MovimentacaoPainel.mapearParaJson(rows);
 
     return reply.send(result);
   } catch (err) {
@@ -64,9 +54,7 @@ const getById = async (req, reply) => {
     const m = await movimentacaoService.getById(mpncod);
     if (!m) return reply.status(404).send({ error: "not_found" });
 
-    const result = MovimentacaoPainel && typeof MovimentacaoPainel.mapearParaJson === "function"
-      ? MovimentacaoPainel.mapearParaJson(m)
-      : m;
+    const result = MovimentacaoPainel.mapearParaJson(m);
 
     return reply.send(result);
   } catch (err) {

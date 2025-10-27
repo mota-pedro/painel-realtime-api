@@ -8,6 +8,7 @@ import ProprioModel from "./proprio.js";
 import FuncaoModel from "./funcao.js";
 import ModeloPainelModel from "./modelo_painel.js";
 import ProprioFuncionarioModel from "./proprio_funcionario.js";
+import ProprioSetorModel from "./proprio_setor.js";
 import SysConfigModel from "./sys_config.js";
 import SetorModel from "./setor.js";
 
@@ -17,6 +18,7 @@ const Proprio = ProprioModel(sequelize);
 const Funcao = FuncaoModel(sequelize);
 const ModeloPainel = ModeloPainelModel(sequelize);
 const ProprioFuncionario = ProprioFuncionarioModel(sequelize);
+const ProprioSetor = ProprioSetorModel(sequelize);
 const SysConfig = SysConfigModel(sequelize);
 const Setor = SetorModel(sequelize);
 
@@ -45,6 +47,33 @@ Funcionario.hasMany(ProprioFuncionario, {
   foreignKey: 'funcod',
   sourceKey: 'funcod',
   as: 'propriosFuncionarios'
+});
+
+// ProprioSetor pertence a Proprio e Setor
+ProprioSetor.belongsTo(Proprio, {
+  foreignKey: 'prpcod',
+  targetKey: 'prpcod', // campo PK na tabela proprio
+  as: 'proprio'
+});
+
+ProprioSetor.belongsTo(Setor, {
+  foreignKey: 'setcod',
+  targetKey: 'setcod', // campo PK na tabela setor
+  as: 'setor'
+});
+
+// Proprio tem muitos ProprioSetor
+Proprio.hasMany(ProprioSetor, {
+  foreignKey: 'prpcod',
+  sourceKey: 'prpcod',
+  as: 'propriosSetores'
+});
+
+// Setor tem muitos ProprioSetor
+Setor.hasMany(ProprioSetor, {
+  foreignKey: 'setcod',
+  sourceKey: 'setcod',
+  as: 'setoresProprios'
 });
 
 // MovimentacaoPainel pertence a um Proprio
@@ -76,4 +105,4 @@ Funcao.hasMany(MovimentacaoPainel, {
 });
 
 export { sequelize, Sequelize };
-export default { Funcionario, MovimentacaoPainel, Proprio, Funcao, ModeloPainel, ProprioFuncionario, SysConfig, Setor };
+export default { Funcionario, MovimentacaoPainel, Proprio, Funcao, ModeloPainel, ProprioFuncionario, ProprioSetor, SysConfig, Setor };

@@ -1,20 +1,20 @@
-import proprioFunService from "../services/proprioFunService.js";
+import proprioSetorService from "../services/proprioFunService.js";
 import modelos from "../models/modelos.js";
 
-const { ProprioFuncionario } = modelos;
+const { ProprioFuncionario: ProprioSetor } = modelos;
 
 const mapResult = (obj) => {
   if (!obj) return obj;
-  if (ProprioFuncionario && typeof ProprioFuncionario.mapearParaJson === "function") return ProprioFuncionario.mapearParaJson(obj);
+  if (ProprioSetor && typeof ProprioSetor.mapearParaJson === "function") return ProprioSetor.mapearParaJson(obj);
   if (Array.isArray(obj)) return obj.map((o) => (o && typeof o.toJSON === "function" ? o.toJSON() : o));
   return obj && typeof obj.toJSON === "function" ? obj.toJSON() : obj;
 };
 
 const create = async (req, reply) => {
   try {
-    const payload = ProprioFuncionario.fromJson(req.body);
+    const payload = ProprioSetor.fromJson(req.body);
 
-    const created = await proprioFunService.create(payload);
+    const created = await proprioSetorService.create(payload);
     return reply.send(mapResult(created));
   } catch (err) {
     req.log.error(err);
@@ -24,10 +24,10 @@ const create = async (req, reply) => {
 
 const update = async (req, reply) => {
   try {
-    const { prpfuncod } = req.params;
-    const data = ProprioFuncionario.fromJson(req.body);
+    const { prpsetcod } = req.params;
+    const data = ProprioSetor.fromJson(req.body);
 
-    const updated = await proprioFunService.update(prpfuncod, data);
+    const updated = await proprioSetorService.update(prpsetcod, data);
     return reply.send(mapResult(updated));
   } catch (err) {
     req.log.error(err);
@@ -38,18 +38,7 @@ const update = async (req, reply) => {
 const listByProprio = async (req, reply) => {
   try {
     const { prpcod } = req.params;
-    const rows = await proprioFunService.listByProprio(prpcod);
-    return reply.send(mapResult(rows));
-  } catch (err) {
-    req.log.error(err);
-    return reply.status(500).send({ error: err.message });
-  }
-};
-
-const listByFuncionario = async (req, reply) => {
-  try {
-    const { funcod } = req.params;
-    const rows = await proprioFunService.listByFuncionario(funcod);
+    const rows = await proprioSetorService.listByProprio(prpcod);
     return reply.send(mapResult(rows));
   } catch (err) {
     req.log.error(err);
@@ -59,8 +48,8 @@ const listByFuncionario = async (req, reply) => {
 
 const getById = async (req, reply) => {
   try {
-    const { prpfuncod } = req.params;
-    const p = await proprioFunService.getById(prpfuncod);
+    const { prpsetcod } = req.params;
+    const p = await proprioSetorService.getById(prpsetcod);
     if (!p) return reply.status(404).send({ error: "not_found" });
     return reply.send(mapResult(p));
   } catch (err) {
@@ -71,8 +60,8 @@ const getById = async (req, reply) => {
 
 const remove = async (req, reply) => {
   try {
-    const { prpfuncod } = req.params;
-    await proprioFunService.remove(prpfuncod);
+    const { prpsetcod } = req.params;
+    await proprioSetorService.remove(prpsetcod);
     return reply.send({ ok: true });
   } catch (err) {
     req.log.error(err);
@@ -80,4 +69,4 @@ const remove = async (req, reply) => {
   }
 };
 
-export default { create, update, listByProprio, listByFuncionario, getById, remove };
+export default { create, update, listByProprio, getById, remove };

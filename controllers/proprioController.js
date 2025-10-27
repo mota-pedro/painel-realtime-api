@@ -13,9 +13,7 @@ const mapResult = (obj) => {
 
 const create = async (req, reply) => {
   try {
-    const payload = Proprio && typeof Proprio.fromJson === "function"
-      ? Proprio.fromJson(req.body)
-      : req.body;
+    const payload = Proprio.fromJson(req.body);
 
     const proprio = await proprioService.create(payload);
 
@@ -29,9 +27,7 @@ const create = async (req, reply) => {
 const update = async (req, reply) => {
   try {
     const { prpcod } = req.params;
-    const payload = Proprio && typeof Proprio.fromJson === "function"
-      ? Proprio.fromJson(req.body)
-      : req.body;
+    const payload = Proprio.fromJson(req.body);
 
     const proprio = await proprioService.update(prpcod, payload);
     return reply.send(mapResult(proprio));

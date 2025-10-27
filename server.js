@@ -39,8 +39,8 @@ app.addHook("onRequest", async (req, reply) => {
   const url = req.raw.url.split("?")[0];
 
   const publicRoutes = [
-    /^\/panel\/auth\/login$/,
-    /^\/panel\/auth\/cadastro$/
+    /^\/painel\/auth\/login$/,
+    /^\/painel\/auth\/cadastro$/
   ];
 
   if (publicRoutes.some((pattern) => pattern.test(url))) {
@@ -70,7 +70,7 @@ app.register(
     fastify.register(proprioFuncionarioRoutes, { prefix: "/proprio-funcionarios" });
     fastify.register(setorRoutes, { prefix: "/setores" });
   },
-  { prefix: "/panel" }
+  { prefix: "/painel" }
 );
 
 // inicialização segura

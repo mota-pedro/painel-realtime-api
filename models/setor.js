@@ -21,7 +21,7 @@ export default (sequelize) => {
     const mapear = (s) => ({
       id: s.setcod,
       nome: s.setdes,
-      dataCadastro: s.setdatcad,
+      dataCadastro: s.setdatcad ?? null,
     });
 
     return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
@@ -33,7 +33,7 @@ export default (sequelize) => {
     return {
         setcod: json.id,
         setdes: json.nome,
-        setdatcad: json.dataCadastro,
+        setdatcad: json.dataCadastro ?? null,
     };
     };
 

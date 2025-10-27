@@ -29,15 +29,15 @@ export default (sequelize) => {
     const mapear = (f) => ({
       id: f.fnccod,
       nome: f.fncdes,
-      dispositivo: f.fncdis,
-      botao: f.fncbot,
-      dataCadastro: f.fncdatcad,
+      dispositivo: f.fncdis ?? null,
+      botao: f.fncbot ?? null,
+      dataCadastro: f.fncdatcad ?? null,
       setorId: f.setcod,
-      areaId: f.arecod,
-      pessoaId: f.pescod,
-      tempoExpiracao: f.fnctmpexp,
+      areaId: f.arecod ?? null,
+      pessoaId: f.pescod ?? null,
+      tempoExpiracao: f.fnctmpexp ?? null,
       botaoFechamento: f.fncbotfec,
-      digitoVerificador: f.fncdigver,
+      digitoVerificador: f.fncdigver ?? null,
     });
 
     return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
@@ -49,15 +49,15 @@ export default (sequelize) => {
     return {
       fnccod: json.id,
       fncdes: json.nome,
-      fncdis: json.dispositivo,
-      fncbot: json.botao,
-      fncdatcad: json.dataCadastro,
+      fncdis: json.dispositivo ?? null,
+      fncbot: json.botao ?? null,
+      fncdatcad: json.dataCadastro ?? null,
       setcod: json.setorId,
-      arecod: json.areaId,
-      pescod: json.pessoaId,
-      fnctmpexp: json.tempoExpiracao,
+      arecod: json.areaId ?? null,
+      pescod: json.pessoaId ?? null,
+      fnctmpexp: json.tempoExpiracao ?? null,
       fncbotfec: json.botaoFechamento,
-      fncdigver: json.digitoVerificador,
+      fncdigver: json.digitoVerificador ?? null,
     };
   };
 

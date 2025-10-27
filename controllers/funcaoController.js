@@ -5,15 +5,11 @@ const { Funcao } = modelos;
 
 const create = async (req, reply) => {
   try {
-    const payload = Funcao && typeof Funcao.fromJson === "function"
-      ? Funcao.fromJson(req.body)
-      : req.body;
+    const payload = Funcao.fromJson(req.body);
 
     const created = await funcService.create(payload);
 
-    const result = Funcao && typeof Funcao.mapearParaJson === "function"
-      ? Funcao.mapearParaJson(created)
-      : created;
+    const result = Funcao.mapearParaJson(created);
 
     return reply.send(result);
   } catch (err) {
@@ -25,15 +21,11 @@ const create = async (req, reply) => {
 const update = async (req, reply) => {
   try {
     const { fnccod } = req.params;
-    const data = Funcao && typeof Funcao.fromJson === "function"
-      ? Funcao.fromJson(req.body)
-      : req.body;
+    const data = Funcao.fromJson(req.body);
 
     const updated = await funcService.update(fnccod, data);
 
-    const result = Funcao && typeof Funcao.mapearParaJson === "function"
-      ? Funcao.mapearParaJson(updated)
-      : updated;
+    const result = Funcao.mapearParaJson(updated);
 
     return reply.send(result);
   } catch (err) {
@@ -47,9 +39,7 @@ const listBySetor = async (req, reply) => {
     const { setcod } = req.params;
     const rows = await funcService.listBySetor(setcod);
 
-    const result = Funcao && typeof Funcao.mapearParaJson === "function"
-      ? Funcao.mapearParaJson(rows)
-      : rows;
+    const result = Funcao.mapearParaJson(rows);
 
     return reply.send(result);
   } catch (err) {
@@ -64,9 +54,7 @@ const getById = async (req, reply) => {
     const f = await funcService.getById(fnccod);
     if (!f) return reply.status(404).send({ error: "not_found" });
 
-    const result = Funcao && typeof Funcao.mapearParaJson === "function"
-      ? Funcao.mapearParaJson(f)
-      : f;
+    const result = Funcao.mapearParaJson(f);
 
     return reply.send(result);
   } catch (err) {

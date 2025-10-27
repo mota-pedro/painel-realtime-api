@@ -29,7 +29,7 @@ const handleIncomingMovimentacao = async (
     mpnstt
   });
   if (movimentacaoExists) {
-    throw new Error("Movimentação duplicada");
+    throw new Error("Esta movimentação ainda está aberta, finalize-a antes de chamá-la novamente");
   }
 
   const saved = await movimentacaoRepo.createMovimentacao({
