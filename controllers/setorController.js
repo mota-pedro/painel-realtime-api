@@ -49,6 +49,18 @@ const getById = async (req, reply) => {
   }
 };
 
+const listAllByEmpresa = async (req, reply) => {
+  try {
+    const { prpcod } = req.params;
+    const rows = await setorService.listByProprio(prpcod);
+    return reply.send(mapResult(rows));
+  }
+  catch (err) {
+    req.log.error(err);
+    return reply.status(500).send({ error: err.message });
+  }
+};
+
 const remove = async (req, reply) => {
   try {
     const { setcod } = req.params;
@@ -60,4 +72,4 @@ const remove = async (req, reply) => {
   }
 };
 
-export default { create, update, getById, remove };
+export default { create, update, getById, listAllByEmpresa, remove };
