@@ -8,7 +8,6 @@ import ProprioModel from "./proprio.js";
 import FuncaoModel from "./funcao.js";
 import ModeloPainelModel from "./modelo_painel.js";
 import ProprioFuncionarioModel from "./proprio_funcionario.js";
-import ProprioSetorModel from "./proprio_setor.js";
 import SysConfigModel from "./sys_config.js";
 import SetorModel from "./setor.js";
 
@@ -18,10 +17,10 @@ const Proprio = ProprioModel(sequelize);
 const Funcao = FuncaoModel(sequelize);
 const ModeloPainel = ModeloPainelModel(sequelize);
 const ProprioFuncionario = ProprioFuncionarioModel(sequelize);
-const ProprioSetor = ProprioSetorModel(sequelize);
 const SysConfig = SysConfigModel(sequelize);
 const Setor = SetorModel(sequelize);
 
+/*
 // ProprioFuncionario pertence a Proprio e Funcionario
 ProprioFuncionario.belongsTo(Proprio, {
   foreignKey: 'prpcod',
@@ -48,32 +47,20 @@ Funcionario.hasMany(ProprioFuncionario, {
   sourceKey: 'funcod',
   as: 'propriosFuncionarios'
 });
+*/
 
-// ProprioSetor pertence a Proprio e Setor
-ProprioSetor.belongsTo(Proprio, {
+// Funcionario pertence a um Proprio
+Funcionario.belongsTo(Proprio, {
   foreignKey: 'prpcod',
-  targetKey: 'prpcod', // campo PK na tabela proprio
+  targetKey: 'prpcod',
   as: 'proprio'
 });
 
-ProprioSetor.belongsTo(Setor, {
-  foreignKey: 'setcod',
-  targetKey: 'setcod', // campo PK na tabela setor
-  as: 'setor'
-});
-
-// Proprio tem muitos ProprioSetor
-Proprio.hasMany(ProprioSetor, {
+// Proprio tem muitos Funcionarios
+Proprio.hasMany(Funcionario, {
   foreignKey: 'prpcod',
   sourceKey: 'prpcod',
-  as: 'propriosSetores'
-});
-
-// Setor tem muitos ProprioSetor
-Setor.hasMany(ProprioSetor, {
-  foreignKey: 'setcod',
-  sourceKey: 'setcod',
-  as: 'setoresProprios'
+  as: 'funcionarios'
 });
 
 // MovimentacaoPainel pertence a um Proprio
@@ -104,5 +91,19 @@ Funcao.hasMany(MovimentacaoPainel, {
   as: 'movimentacoesPainel'
 });
 
+// Setor pertence a um Proprio
+Setor.belongsTo(Proprio, {
+  foreignKey: 'prpcod',
+  targetKey: 'prpcod',
+  as: 'proprio'
+});
+
+// Proprio tem muitos Setores
+Proprio.hasMany(Setor, {
+  foreignKey: 'prpcod',
+  sourceKey: 'prpcod',
+  as: 'setores'
+});
+
 export { sequelize, Sequelize };
-export default { Funcionario, MovimentacaoPainel, Proprio, Funcao, ModeloPainel, ProprioFuncionario, ProprioSetor, SysConfig, Setor };
+export default { Funcionario, MovimentacaoPainel, Proprio, Funcao, ModeloPainel, ProprioFuncionario, SysConfig, Setor };

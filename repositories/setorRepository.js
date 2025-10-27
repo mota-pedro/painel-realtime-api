@@ -1,10 +1,8 @@
 import models from "../models/modelos.js";
 const { Setor } = models;
 
-const createSetor = async ({ 
-    setdes, setdatcad
-}) => {
-  return Setor.create({ setdes, setdatcad });
+const createSetor = async ({ setdes, setdatcad, prpcod }) => {
+  return Setor.create({ setdes, setdatcad, prpcod });
 };
 
 const updateSetor = async (setcod, data) => {
@@ -15,6 +13,13 @@ const updateSetor = async (setcod, data) => {
 
 const findById = async (setcod) => {
   return Setor.findByPk(setcod);
+};
+
+const findAllByProprio = async (prpcod) => {
+  return Setor.findAll({
+    where: { prpcod },
+    order: [["PRPCOD", "ASC"]],
+  });
 };
 
 const removeSetor = async (setcod) => {
@@ -29,4 +34,5 @@ export default {
   updateSetor,
   findById,
   removeSetor,
+  findAllByProprio
 };

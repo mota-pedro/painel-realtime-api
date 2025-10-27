@@ -27,112 +27,29 @@ const login = async ({ funlog, funsen }) => {
       funlog: funcionario.funlog,
       fundes: funcionario.fundes,
       funcpf: funcionario.funcpf,
+      prpcod: funcionario.prpcod
     },
     token,
   };
 };
 
 const cadastro = async (dados) => {
-  const {
-    prpdes, 
-    prpfan, 
-    prpcgc, 
-    prpierg,
-    prpincmun,
-    prpend,
-    prpcmp,
-    prpnum,
-    prpbai,
-    prpmun,
-    prpuf,
-    prpcep,
-    prpcodibge,
-    prptel,
-    prpemail,
-    prpresp,
-    prplogo,
-    prpobs,
-    prpdatcad,
-    modpnlcod,
-    fundes,
-    funcpf,
-    funrg,
-    funend,
-    funbai,
-    funcmp,
-    funnum,
-    funmun,
-    funuf,
-    funcep,
-    funcodibge,
-    funtel,
-    funemail,
-    funfotdoc,
-    funobs,
-    funlog,
-    funsen,
-    fundatcad,
-    funati,
-  } = dados;
+  const proprio = await proprioRepo.create(dados.proprio);
+  if (!proprio?.prpcod) throw new Error("Falha ao cadastrar a empresa (próprio).");
 
-  const proprio = await proprioRepo.create({
-    prpdes, 
-    prpfan, 
-    prpcgc, 
-    prpierg,
-    prpincmun,
-    prpend,
-    prpcmp,
-    prpnum,
-    prpbai,
-    prpmun,
-    prpuf,
-    prpcep,
-    prpcodibge,
-    prptel,
-    prpemail,
-    prpresp,
-    prplogo,
-    prpobs,
-    prpdatcad,
-    modpnlcod,
-  });
-
-  if (!proprio?.prpcod) {
-    throw new Error("Falha ao cadastrar a empresa (próprio).");
-  }
-
-  const senhaHash = await bcrypt.hash(funsen, 10);
+  const senhaHash = await bcrypt.hash(dados.funcionario.funsen, 10);
 
   const funcionario = await funcionarioRepo.create({
-    fundes,
-    funcpf,
-    funrg,
-    funend,
-    funbai,
-    funcmp,
-    funnum,
-    funmun,
-    funuf,
-    funcep,
-    funcodibge,
-    funtel,
-    funemail,
-    funfotdoc,
-    funobs,
-    funlog,
+    ...dados.funcionario,
     funsen: senhaHash,
-    fundatcad,
-    funati,
+    prpcod: proprio.prpcod
   });
 
   const funcionarioJSON = funcionario.toJSON();
-  delete funcionarioJSON.senha;
+  delete funcionarioJSON.funsen;
 
-  return {
-    empresa: proprio,
-    funcionario: funcionarioJSON,
-  };
+  return { empresa: proprio, funcionario: funcionarioJSON };
 };
+
 
 export default { login, cadastro };

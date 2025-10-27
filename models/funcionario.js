@@ -23,7 +23,7 @@ export default (sequelize) => {
       funlog: { type: DataTypes.STRING(20), allowNull: true, field: "FUNLOG" },
       funsen: { type: DataTypes.STRING(100), allowNull: true, field: "FUNSEN" },
       fundatcad: { type: DataTypes.DATE, allowNull: true, field: "FUNDATCAD" },
-      //prpcod: {type: DataTypes.INTEGER, allowNull: false, field: "PRPCOD"},
+      prpcod: { type: DataTypes.INTEGER, allowNull: false, field: "PRPCOD" },
       funati: { type: DataTypes.CHAR(1), allowNull: false, defaultValue: "N", field: "FUNATI" },
     },
     {
@@ -56,8 +56,8 @@ export default (sequelize) => {
       login: f.funlog,
       senha: f.funsen,
       dataCadastro: f.fundatcad ?? null,
-      //empresaId: f.prpcod,
       ativo: f.funati === "S",
+      empresaId: f.prpcod,
     });
 
     return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
@@ -85,9 +85,9 @@ export default (sequelize) => {
       funobs: json.observacao ?? null,
       funlog: json.login,
       funsen: json.senha,
-      fundatcad: json.dataCadastro ?? null,
-      //prpcod: json.empresaId,
+      fundatcad: json.dataCadastro ?? new Date().toISOString().split("T")[0],
       funati: json.ativo ? "S" : "N",
+      prpcod: json.empresaId
     };
   };
 

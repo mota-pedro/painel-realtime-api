@@ -86,7 +86,7 @@ export default (sequelize) => {
       prpresp: json.responsavel ?? null,
       prplogo: json.logo ?? null,
       prpobs: json.observacao ?? null,
-      prpdatcad: json.dataCadastro ?? null,
+      prpdatcad: json.dataCadastro ?? new Date().toISOString().split("T")[0],
       modpnlcod: json.modeloPainelId ?? null,
     };
   };

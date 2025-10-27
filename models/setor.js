@@ -7,6 +7,7 @@ export default (sequelize) => {
       setcod: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: "SETCOD" },
       setdes: { type: DataTypes.STRING(40), allowNull: true, field: "SETDES" },
       setdatcad: { type: DataTypes.DATE, allowNull: true, field: "SETDATCAD" },
+      prpcod: { type: DataTypes.INTEGER, allowNull: false, field: "PRPCOD" }
     },
     {
       tableName: "setor",
@@ -22,6 +23,7 @@ export default (sequelize) => {
       id: s.setcod,
       nome: s.setdes,
       dataCadastro: s.setdatcad ?? null,
+      empresaId: s.prpcod
     });
 
     return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
@@ -34,6 +36,7 @@ export default (sequelize) => {
         setcod: json.id,
         setdes: json.nome,
         setdatcad: json.dataCadastro ?? null,
+        prpcod: json.empresaId
     };
     };
 

@@ -1,5 +1,4 @@
 import setorService from "../services/setorService.js";
-import proprioSetorService from "../services/proprioSetorService.js";
 import modelos from "../models/modelos.js";
 
 const { Setor } = modelos;
@@ -13,22 +12,10 @@ const mapResult = (obj) => {
 
 const create = async (req, reply) => {
   try {
-    const { empresaId } = req.body;
-    if (!empresaId) throw new Error("empresaId é obrigatório");
-
-    console.log("payload:", req.body);
-    req.body.empresaId.remove;
-
     const payload = Setor.fromJson(req.body);
     console.log("Payload setor:", payload);
 
     const created = await setorService.create(payload);
-
-    const proprioSetorPayload = {
-      prpcod: empresaId,
-      setcod: created.setcod,
-    };
-    await proprioSetorService.create(proprioSetorPayload);
 
     return reply.send(mapResult(created));
   } catch (err) {

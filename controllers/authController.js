@@ -1,11 +1,13 @@
 import authService from "../services/authService.js";
 import proprioFunService from "../services/proprioFunService.js";
-import proprioSetorService from "../services/proprioSetorService.js";
+import proprioService from "../services/proprioService.js";
+import setorService from "../services/setorService.js";
 import models from "../models/modelos.js";
 const { Funcionario, Proprio } = models;
 const { login: _login, cadastro: _cadastro } = authService;
+const { getById: _getById } = proprioService;
 const { create: _createProprioFun, listByFuncionario: _listByFuncionario } = proprioFunService;
-const { listByProprio: _listByProprio } = proprioSetorService;
+const { listByProprio: _listByProprio } = setorService;
 
 const login = async (req, reply) => {
   try {
@@ -22,8 +24,19 @@ const login = async (req, reply) => {
     }
 
     const result = await _login({ funlog, funsen });
-    const funcionario = Funcionario.mapearParaJson(result.funcionario);
+    const e = await _getById(result.funcionario.prpcod);
+    
+    const setoresEmpresa = await _listByProprio(e.prpcod);
+    const setores = [];
+    for (const setor of setoresEmpresa) {
+      setores.push({id: setor.setcod});
+    }
 
+    const funcionario = Funcionario.mapearParaJson(result.funcionario);
+    const empresa = Proprio.mapearParaJson(e);
+
+
+    /*
     const empresasFuncionario = await _listByFuncionario(funcionario.id);
     const empresas = [];
     for (const empresa of empresasFuncionario) {
@@ -38,6 +51,7 @@ const login = async (req, reply) => {
       const eFormated = Proprio.mapearParaJson(e);
       empresas.push({ id: eFormated.id, nome: eFormated.nome, cnpj: eFormated.cnpj, setores: setores });
     }
+      */
 
     console.log("Movimentações da empresa:", result);
     return reply.send({
@@ -47,7 +61,12 @@ const login = async (req, reply) => {
         nome: funcionario.nome,
         cpf: funcionario.cpf,
       },
-      empresas: empresas,
+      empresa: {
+        id: empresa.id,
+        nome: empresa.nome,
+        cnpj: empresa.cnpj
+      },
+      setores: setores,
       token: result.token,
     });
   } catch (err) {
@@ -78,10 +97,11 @@ const cadastro = async (req, reply) => {
           */
 
       const result = await _cadastro({
-        empresa: empDados,
+        proprio: empDados,
         funcionario: funcDados,
       });
 
+      /*
       const proprioFun = await _createProprioFun({
         prpcod: result.empresa.prpcod,
         funcod: result.funcionario.funcod,
@@ -92,6 +112,7 @@ const cadastro = async (req, reply) => {
       }
 
       console.log("ProprioFun criado:", proprioFun);
+      */
 
       return reply.status(201).send({
         mensagem: "Dados cadastrados",
