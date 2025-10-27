@@ -36,7 +36,7 @@ const login = async (req, reply) => {
         setores.push({id: setor.setcod});
       }      
       const eFormated = Proprio.mapearParaJson(e);
-      empresas.push({ id: eFormated.id, nome: eFormated.nome, setores: setores });
+      empresas.push({ id: eFormated.id, nome: eFormated.nome, cnpj: eFormated.cnpj, setores: setores });
     }
 
     console.log("Movimentações da empresa:", result);
