@@ -25,12 +25,6 @@ const login = async (req, reply) => {
 
     const result = await _login({ funlog, funsen });
     const e = await _getById(result.funcionario.prpcod);
-    
-    const setoresEmpresa = await _listByProprio(e.prpcod);
-    const setores = [];
-    for (const setor of setoresEmpresa) {
-      setores.push({id: setor.setcod});
-    }
 
     const funcionario = Funcionario.mapearParaJson(result.funcionario);
     const empresa = Proprio.mapearParaJson(e);
@@ -66,7 +60,6 @@ const login = async (req, reply) => {
         nome: empresa.nome,
         cnpj: empresa.cnpj
       },
-      setores: setores,
       token: result.token,
     });
   } catch (err) {

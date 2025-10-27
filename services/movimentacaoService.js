@@ -3,23 +3,22 @@ import setorRepo from "../repositories/setorRepository.js";
 import funcaoRepo from "../repositories/funcaoRepository.js";
 
 const handleIncomingMovimentacao = async (
-  { mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, setcod, prpcod },
+  { mpndat, mpnhr, fnccod, mpnstt, mpndatfin, mpnhrfin, prpcod },
   fastify
 ) => {
   if (!prpcod) throw new Error("prpcod é obrigatório");
   if (!fnccod) throw new Error("fnccod é obrigatório");
-  if (!setcod) throw new Error("setcod é obrigatório");
 
   const func = await funcaoRepo.findById(fnccod);
   if (!func) throw new Error("Função (fnccod) não encontrada");
 
-  const setor = await setorRepo.findById(setcod);
+  const setor = await setorRepo.findById(func.setcod);
   if (!setor) throw new Error("Setor (setcod) não encontrado");
 
   if (func.fncbotfec === 'N') {
     const existeAberta = await movimentacaoRepo.findDuplicate({
       fnccod,
-      setcod,
+      setcod: setor.setcod,
       prpcod,
       mpnstt: 'A',
     });
@@ -36,7 +35,7 @@ const handleIncomingMovimentacao = async (
       mpndatfin: null,
       mpnhrfin: null,
       mpncodfin: null,
-      setcod,
+      setcod: setor.setcod,
       prpcod,
     });
 
@@ -63,7 +62,7 @@ const handleIncomingMovimentacao = async (
   }
 
   if (func.fncbotfec === 'S') {
-    const movimentacoesAbertas = await movimentacaoRepo.findAllBySetor(setcod);
+    const movimentacoesAbertas = await movimentacaoRepo.findAllBySetor(setor.setcod);
     const formattedDate = (mpndatfin || new Date()).toISOString().split('T')[0]
     const formattedTime = (mpnhrfin || new Date()).toTimeString().split(' ')[0];
 
@@ -74,7 +73,7 @@ const handleIncomingMovimentacao = async (
       mpnstt: "F",
       mpndatfin: formattedDate,
       mpnhrfin: formattedTime,
-      setcod,
+      setcod: setor.setcod,
       prpcod,
     });
 
@@ -97,8 +96,8 @@ const handleIncomingMovimentacao = async (
           prpcod,
           fnccod: func.fnccod,
           fncdes: func.fncdes,
-          setcod: setor?.setcod ?? null,
-          setdes: setor?.setdes ?? null,
+          setcod: setor.setcod,
+          setdes: setor.setdes,
         });
       } catch (err) {
         fastify.log.warn(`Falha ao fechar movimentação ${movimentacao.mpncod}: ${err.message}`);
