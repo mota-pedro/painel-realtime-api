@@ -52,7 +52,12 @@ const listByProprio = async (req, reply) => {
   try {
     const { prpcod } = req.params;
     const rows = await funcService.listByProprio(prpcod);
-    const result = Funcao.mapearParaJson(rows);
+
+    const result = rows.map(f => ({
+      ...Funcao.mapearParaJson(f),
+      setorNome: f.setores.setdes ?? null,
+    }));
+
     return reply.send(result);
   } catch (err) {
     req.log.error(err);

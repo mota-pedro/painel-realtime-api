@@ -77,6 +77,20 @@ Proprio.hasMany(MovimentacaoPainel, {
   as: 'movimentacoesPainel'
 });
 
+// MovimentacaoPainel pertence a um Proprio
+Funcao.belongsTo(Setor, {
+  foreignKey: 'setcod',
+  targetKey: 'setcod',
+  as: 'setores'
+});
+
+// Um Proprio tem muitas MovimentacoesPainel
+Setor.hasMany(Funcao, {
+  foreignKey: 'setcod',
+  sourceKey: 'setcod',
+  as: 'funcao'
+});
+
 // MovimentacaoPainel pertence a uma Funcao
 MovimentacaoPainel.belongsTo(Funcao, {
   foreignKey: 'fnccod',

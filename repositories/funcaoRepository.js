@@ -1,5 +1,5 @@
 import models from "../models/modelos.js";
-const { Funcao } = models;
+const { Funcao, Setor } = models;
 
 const createFuncao = async ({ 
   fncdes, fncdis, fncbot, fncdatcad, setcod, arecod, pescod, fnctmpexp, fncbotfec, fncdigver, prpcod
@@ -27,6 +27,13 @@ const findAllBySetor = async (setcod) => {
 const findAllByProprio = async (prpcod) => {
   return Funcao.findAll({
     where: { prpcod },
+    include: [
+      {
+        model: Setor,
+        as: "setores",
+        attributes: ["setdes"],
+      },
+    ],
     order: [["PRPCOD", "ASC"]],
   });
 };
