@@ -5,6 +5,7 @@ const { MovimentacaoPainel } = modelos;
 
 const create = async (req, reply) => {
   try {
+    console.log("REQ BODY:", req.body);
     const payload = MovimentacaoPainel.fromJson(req.body);
 
     const created = await movimentacaoService.handleIncomingMovimentacao(payload, req.server);

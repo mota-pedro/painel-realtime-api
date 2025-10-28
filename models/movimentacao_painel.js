@@ -1,4 +1,5 @@
 import { DataTypes } from "sequelize";
+import { format } from "sequelize/lib/utils";
 
 export default (sequelize) => {
   const MovimentacaoPainel = sequelize.define(
@@ -44,18 +45,33 @@ export default (sequelize) => {
   MovimentacaoPainel.fromJson = (json) => {
     if (!json) return null;
 
-    return {
-      mpncod: json.id,
-      mpndat: json.data ?? new Date().toISOString().split("T")[0],
-      mpnhr: json.hora ?? new Date().toISOString().split("T")[1].split(".")[0],
-      fnccod: json.funcaoId,
-      mpnstt: json.status ?? 'A',
-      mpndatfin: json.dataFim ?? null,
-      mpnhrfin: json.horaFim ?? null,
-      mpncodfin: json.finalizacaoId ?? null,
-      setcod: json.setorId,
-      prpcod: json.empresaId,
+    const mpndat = json.data;
+    const mpnhr = json.hora;
+    const mpndatfin = json.dataFim;
+    const mpnhrfin = json.horaFim;
+
+    const formatDate = (date) => {
+      if (!date) return null;
+      return date.toString().split("T")[0];
     };
+
+    const formatTime = (time) => {
+      if (!time) return null;
+      return time.toString().split(".")[0];
+    };
+
+    return {
+    mpncod: json.id,
+    mpndat: formatDate(mpndat),
+    mpnhr: formatTime(mpnhr),
+    fnccod: json.funcaoId,
+    mpnstt: json.status ?? 'A',
+    mpndatfin: json.dataFim ? formatDate(mpndatfin) : null,
+    mpnhrfin: json.horaFim ? formatTime(mpnhrfin) : null,
+    mpncodfin: json.finalizacaoId ?? null,
+    setcod: json.setorId,
+    prpcod: json.empresaId,
+  };
   };
 
   return MovimentacaoPainel;
