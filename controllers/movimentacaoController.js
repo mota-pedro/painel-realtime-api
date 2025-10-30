@@ -41,13 +41,14 @@ const listByProprio = async (req, reply) => {
     const { date } = req.query;
 
     let rows;
+    let result;
     if (date) {
       rows = await movimentacaoService.listByProprioWithDate(prpcod, date);
+      result = rows;
     } else {
       rows = await movimentacaoService.listByProprio(prpcod);
+      result = MovimentacaoPainel.mapearParaJson(rows);
     }
-
-    const result = MovimentacaoPainel.mapearParaJson(rows);
 
     return reply.send(result);
   } catch (err) {

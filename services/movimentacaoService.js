@@ -134,7 +134,35 @@ const handleUpdateMovimentacao = async (mpncod, data, fastify) => {
 const listByProprio = async (prpcod) => movimentacaoRepo.findAllByProprio(prpcod);
 
 const listByProprioWithDate = async (prpcod, mpndat) => {
-  return await movimentacaoRepo.findAllByProprioWithDate(prpcod, mpndat);
+
+  const response = [];
+  const movimentacoes = await movimentacaoRepo.findAllByProprioWithDate(prpcod, mpndat);
+  for (const m of movimentacoes) {
+    const func = await funcaoRepo.findById(m.fnccod);
+    const setor = await setorRepo.findById(m.setcod);
+    response.push({
+      id: m.mpncod,
+      mpndat: m.mpndat,
+      mpnhr: m.mpnhr,
+      mpndatfin: m.mpndatfin,
+      mpnhrfin: m.mpnhrfin,
+      mpnstt: m.mpnstt,
+      prpcod: m.prpcod,
+      fnccod: func.fnccod,
+      fncdes: func.fncdes,
+      fncdis: func.fncdis,
+      fncbot: func.fncbot,
+      fncbotfec: func.fncbotfec,
+      fnctmpexp: func.fnctmpexp,
+      fncdigver: func.fncdigver,
+      arecod: func.arecod,
+      pescod: func.pescod,
+      setcod: setor.setcod,
+      setdes: setor.setdes,
+    });
+
+  }
+  return response;
 };
 
 const getById = async (mpncod) => movimentacaoRepo.findById(mpncod);
