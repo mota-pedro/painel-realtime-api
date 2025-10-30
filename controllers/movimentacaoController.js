@@ -24,7 +24,7 @@ const update = async (req, reply) => {
     const { mpncod } = req.params;
     const data = MovimentacaoPainel.fromJson(req.body);
 
-    const updated = await movimentacaoService.update(mpncod, data);
+    const updated = await movimentacaoService.handleUpdateMovimentacao(mpncod, data, req.server);
 
     const result = MovimentacaoPainel.mapearParaJson(updated);
 
@@ -38,7 +38,14 @@ const update = async (req, reply) => {
 const listByProprio = async (req, reply) => {
   try {
     const { prpcod } = req.params;
-    const rows = await movimentacaoService.listByProprio(prpcod);
+    const { date } = req.query;
+
+    let rows;
+    if (date) {
+      rows = await movimentacaoService.listByProprioWithDate(prpcod, date);
+    } else {
+      rows = await movimentacaoService.listByProprio(prpcod);
+    }
 
     const result = MovimentacaoPainel.mapearParaJson(rows);
 

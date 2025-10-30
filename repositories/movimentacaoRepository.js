@@ -24,6 +24,16 @@ const findAllByProprio = async (prpcod) => {
   });
 };
 
+const findAllByProprioWithDate = async (prpcod, mpndat) => {
+  return MovimentacaoPainel.findAll({
+    where: {
+      prpcod,
+      mpndat
+    },
+    order: [["MPNDAT", "ASC"]],
+  });
+}
+
 const findAllBySetor = async (setcod) => {
   return MovimentacaoPainel.findAll({
     where: {
@@ -58,6 +68,7 @@ export default {
   updateMovimentacao,
   findById,
   findAllByProprio,
+  findAllByProprioWithDate,
   removeMovimentacao,
   findDuplicate,
   findAllBySetor

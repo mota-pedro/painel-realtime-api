@@ -108,13 +108,34 @@ const handleIncomingMovimentacao = async (
   throw new Error("Erro ao processar chamado");
 };
 
-const update = async (mpncod, data) => {
-  const updated = await movimentacaoRepo.updateMovimentacao(mpncod, data);
+const handleUpdateMovimentacao = async (mpncod, data, fastify) => {
+  const { mpnstt, mpndatfin, mpnhrfin } = data;
+
+  const updated = await movimentacaoRepo.updateMovimentacao(mpncod, {
+    mpnstt,
+    mpndatfin,
+    mpnhrfin
+  });
+
+  if (mpnstt === 'F') {
+    fastify.emitToEmpresa(data.prpcod, "movimentacao_fechada", {
+      movimentacoes: [{
+        id: updated.mpncod,
+        mpndatfin: updated.mpndatfin,
+        mpnhrfin: updated.mpnhrfin,
+      }]
+    });
+  }
+
   if (!updated) throw new Error("Movimentação não encontrada");
   return updated;
 };
 
 const listByProprio = async (prpcod) => movimentacaoRepo.findAllByProprio(prpcod);
+
+const listByProprioWithDate = async (prpcod, mpndat) => {
+  return await movimentacaoRepo.findAllByProprioWithDate(prpcod, mpndat);
+};
 
 const getById = async (mpncod) => movimentacaoRepo.findById(mpncod);
 
@@ -124,4 +145,4 @@ const remove = async (mpncod) => {
   return removed;
 };
 
-export default { handleIncomingMovimentacao, update, listByProprio, getById, remove };
+export default { handleIncomingMovimentacao, handleUpdateMovimentacao, listByProprio, listByProprioWithDate, getById, remove };
