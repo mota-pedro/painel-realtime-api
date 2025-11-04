@@ -38,6 +38,7 @@ export default fp(async (fastify, opts) => {
       socket.user = {
         funcod: decoded.funcod,
         funcpf: decoded.funcpf,
+        empresaId: decoded.empresaId
       };
 
       return next();
