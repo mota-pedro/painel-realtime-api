@@ -16,6 +16,7 @@ const login = async ({ funlog, funsen }) => {
     {
       funcod: funcionario.funcod,
       funcpf: funcionario.funcpf,
+      empresaId: funcionario.prpcod
     },
     jwtSecret,
     { expiresIn: jwtExpiresIn }

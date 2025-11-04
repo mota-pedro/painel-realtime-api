@@ -6,6 +6,8 @@ import formbody from "@fastify/formbody";
 import { verifyToken } from "./utils/authMiddleware.js";
 
 import socketPlugin from "./plugins/socket.js";
+import socketDigitalCall from "./plugins/digital_call.js";
+
 import sequelize from "./config/database.js";
 
 const app = Fastify({
@@ -33,6 +35,7 @@ app.register(formbody);
 
 // websocket
 app.register(socketPlugin);
+app.register(socketDigitalCall);
 
 // Middleware global de autenticação JWT
 app.addHook("onRequest", async (req, reply) => {
