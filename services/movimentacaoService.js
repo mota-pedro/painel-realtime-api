@@ -95,6 +95,7 @@ const handleIncomingMovimentacao = async (
         id: m.mpncod,
         mpndatfin: m.mpndatfin,
         mpnhrfin: m.mpnhrfin,
+        mpndat: m.mpndat
       }))
     });
 
@@ -123,6 +124,7 @@ const handleUpdateMovimentacao = async (mpncod, data, fastify) => {
         id: updated.mpncod,
         mpndatfin: updated.mpndatfin,
         mpnhrfin: updated.mpnhrfin,
+        mpndat: updated.mpndat
       }]
     });
   }

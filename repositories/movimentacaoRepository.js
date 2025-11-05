@@ -1,4 +1,5 @@
 import models from "../models/modelos.js";
+import { Op } from "sequelize";
 const { MovimentacaoPainel } = models;
 
 const createMovimentacao = async ({ 
@@ -28,11 +29,13 @@ const findAllByProprioWithDate = async (prpcod, mpndat) => {
   return MovimentacaoPainel.findAll({
     where: {
       prpcod,
-      mpndat
+      mpndat: {
+        [Op.gte]: mpndat
+      }
     },
     order: [["MPNDAT", "ASC"]],
   });
-}
+};
 
 const findAllBySetor = async (setcod) => {
   return MovimentacaoPainel.findAll({
