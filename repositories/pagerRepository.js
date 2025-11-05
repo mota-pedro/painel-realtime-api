@@ -1,8 +1,8 @@
 import models from "../models/modelos.js";
 const { Pager } = models;
 
-const createPager = async ({ nome, key_value, prpcod, numero, cliente, observacao }) => {
-  return Pager.create({ nome, key_value, prpcod, numero, cliente, observacao });
+const createPager = async ({ nome, key_value, prpcod, numero, cliente, observacao, ocupado }) => {
+  return Pager.create({ nome, key_value, prpcod, numero, cliente, observacao, ocupado });
 };
 
 const updatePager = async (id, data) => {

@@ -10,7 +10,8 @@ export default (sequelize) => {
       nome: { type: DataTypes.STRING, allowNull: false, field: "nome" },
       cliente: { type: DataTypes.STRING, allowNull: true, field: "cliente" },
       observacao: { type: DataTypes.STRING, allowNull: true, field: "observacao" },
-      prpcod: { type: DataTypes.INTEGER, allowNull: false, field: "PRPCOD" }
+      prpcod: { type: DataTypes.INTEGER, allowNull: false, field: "PRPCOD" },
+      ocupado: { type: DataTypes.BOOLEAN, allowNull: false, field: "ocupado", defaultValue: false },
     },
     {
       tableName: "pager",
@@ -29,7 +30,8 @@ export default (sequelize) => {
         empresaId: p.prpcod,
         numero: p.numero,
         cliente: p.cliente ?? null,
-        observacao: p.observacao ?? null
+        observacao: p.observacao ?? null,
+        ocupado: p.ocupado ?? false
     });
 
     return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
@@ -45,7 +47,8 @@ export default (sequelize) => {
         prpcod: json.empresaId,
         numero: json.numero,
         cliente: json.cliente ?? null,
-        observacao: json.observacao ?? null
+        observacao: json.observacao ?? null,
+        ocupado: json.ocupado ?? false
     };
     };
 
