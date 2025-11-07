@@ -12,10 +12,33 @@ const mapResult = (obj) => {
 
 const create = async (req, reply) => {
   try {
-    const payload = Pager.fromJson(req.body);
-    console.log("Payload pager:", payload);
+    const quantidade = parseInt(req.body.quantidade || 1);
+    const basePayload = Pager.fromJson(req.body);
 
-    const created = await pagerService.create(payload);
+    let created = [];
+
+    if (quantidade > 1) {
+      const valorInicial = parseInt(req.body.valor_inicial || 1);
+      const valorFinal = valorInicial + quantidade - 1;
+
+      const digits = valorFinal.toString().length;
+
+      for (let i = valorInicial; i <= valorFinal; i++) {
+        const numStr = i.toString().padStart(digits, "0");
+
+        const novoPager = {
+          ...basePayload,
+          nome: `${basePayload.nome} ${numStr}`,
+          numero: `${(basePayload.numero || "").trim()}${numStr}`,
+        };
+
+        const item = await pagerService.create(novoPager);
+        created.push(item);
+      }
+    } else {
+      const item = await pagerService.create(basePayload);
+      created.push(item);
+    }
 
     return reply.send(mapResult(created));
   } catch (err) {

@@ -8,8 +8,6 @@ export default (sequelize) => {
       numero: { type: DataTypes.STRING, allowNull: false, field: "numero" },
       key_value: { type: DataTypes.STRING, allowNull: false, field: "key_value" },
       nome: { type: DataTypes.STRING, allowNull: false, field: "nome" },
-      cliente: { type: DataTypes.STRING, allowNull: true, field: "cliente" },
-      observacao: { type: DataTypes.STRING, allowNull: true, field: "observacao" },
       prpcod: { type: DataTypes.INTEGER, allowNull: false, field: "PRPCOD" },
       ocupado: { type: DataTypes.BOOLEAN, allowNull: false, field: "ocupado", defaultValue: false },
     },
@@ -29,8 +27,6 @@ export default (sequelize) => {
         key_value: p.key_value,
         empresaId: p.prpcod,
         numero: p.numero,
-        cliente: p.cliente ?? null,
-        observacao: p.observacao ?? null,
         ocupado: p.ocupado ?? false
     });
 
@@ -46,8 +42,6 @@ export default (sequelize) => {
         key_value: json.key_value,
         prpcod: json.empresaId,
         numero: json.numero,
-        cliente: json.cliente ?? null,
-        observacao: json.observacao ?? null,
         ocupado: json.ocupado ?? false
     };
     };

@@ -60,6 +60,7 @@ import funcaoRoutes from "./routes/funcao.js";
 import funcionarioRoutes from "./routes/funcionario.js";
 import proprioRoutes from "./routes/proprio.js";
 import movimentacaoRoutes from "./routes/movimentacao.js";
+import movimentacaoPagerRoutes from "./routes/movimentacaoPager.js";
 //import proprioFuncionarioRoutes from "./routes/proprioFuncionario.js";
 import vinculosRoutes from "./routes/vinculos.js";
 import pagerRoutes from "./routes/pager.js";
@@ -72,6 +73,7 @@ app.register(
     fastify.register(funcionarioRoutes, { prefix: "/funcionarios" });
     fastify.register(proprioRoutes, { prefix: "/empresas" });
     fastify.register(movimentacaoRoutes, { prefix: "/movimentacoes" });
+    fastify.register(movimentacaoPagerRoutes, { prefix: "/movimentacao-pagers" });
     //fastify.register(proprioFuncionarioRoutes, { prefix: "/proprio-funcionarios" });
     fastify.register(vinculosRoutes, { prefix: "/vinculos" });
     fastify.register(pagerRoutes, { prefix: "/pagers" });
