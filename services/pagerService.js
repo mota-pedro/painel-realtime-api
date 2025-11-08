@@ -1,9 +1,9 @@
 import pagerRepo from "../repositories/pagerRepository.js";
 
 const create = async ({ nome, key_value, prpcod, numero, cliente, observacao, ocupado }) => {
-    const existing = await pagerRepo.findByNumero(numero, prpcod);
+    const existing = await pagerRepo.findByKeyAndNumero(numero, key_value, prpcod);
     if (existing) {
-        throw new Error("Já existe um pager com este numero para esta empresa.");
+        throw new Error("Já existe um pager com esta combinação de key_value e numero para esta empresa.");
     }
     return pagerRepo.createPager({ nome, key_value, prpcod, numero, cliente, observacao, ocupado });
 };

@@ -22,9 +22,9 @@ const findAllByProprio = async (prpcod) => {
   });
 };
 
-const findByNumero = async (numero, prpcod) => {
+const findByKeyAndNumero = async (numero, key_value, prpcod) => {
   return Pager.findOne({
-    where: { numero, prpcod },
+    where: { numero, key_value, prpcod },
   });
 }
 
@@ -41,5 +41,5 @@ export default {
   findById,
   removePager,
   findAllByProprio,
-  findByNumero
+  findByKeyAndNumero
 };

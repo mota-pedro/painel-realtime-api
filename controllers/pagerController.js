@@ -23,19 +23,23 @@ const create = async (req, reply) => {
 
       const digits = valorFinal.toString().length;
 
+      const numAsInt = parseInt(basePayload.numero);
+
       for (let i = valorInicial; i <= valorFinal; i++) {
         const numStr = i.toString().padStart(digits, "0");
 
         const novoPager = {
           ...basePayload,
           nome: `${basePayload.nome} ${numStr}`,
-          numero: `${(basePayload.numero || "").trim()}${numStr}`,
+          numero: `${(numAsInt.toString() || "").trim()}${numStr}`,
         };
 
         const item = await pagerService.create(novoPager);
         created.push(item);
       }
     } else {
+      const numAsInt = parseInt(basePayload.numero);
+      basePayload.numero = (numAsInt.toString() || "").trim();
       const item = await pagerService.create(basePayload);
       created.push(item);
     }
