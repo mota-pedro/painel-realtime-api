@@ -13,6 +13,7 @@ export default (sequelize) => {
       dataFim: { type: DataTypes.DATEONLY, allowNull: true, field: "dataFim" },
       horaFim: { type: DataTypes.TIME, allowNull: true, field: "horaFim" },
       prpcod: { type: DataTypes.INTEGER, allowNull: false, field: "PRPCOD" },
+      qtdChamados: { type: DataTypes.INTEGER, allowNull: true, field: "qtdChamados", defaultValue: 0 },
     },
     {
       tableName: "movimentacao_pager",
@@ -33,6 +34,7 @@ export default (sequelize) => {
         dataFim: m.dataFim ?? null,
         horaFim: m.horaFim ?? null,
         empresaId: m.prpcod,
+        qtdChamados: m.qtdChamados ?? 0,
     });
 
     return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
@@ -65,6 +67,7 @@ export default (sequelize) => {
     horaFim: json.horaFim ? formatTime(horaFim) : null,
     pagerId: json.pagerId,
     prpcod: json.empresaId,
+    qtdChamados: json.qtdChamados ?? 0,
   };
   };
 

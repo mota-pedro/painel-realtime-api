@@ -65,6 +65,8 @@ import movimentacaoPagerRoutes from "./routes/movimentacaoPager.js";
 import vinculosRoutes from "./routes/vinculos.js";
 import pagerRoutes from "./routes/pager.js";
 import setorRoutes from "./routes/setor.js";
+import formCampos from "./routes/formCampos.js";
+import movimentacaoFormRoutes from "./routes/movimentacaoForm.js";
 
 app.register(
   async (fastify) => {
@@ -78,6 +80,8 @@ app.register(
     fastify.register(vinculosRoutes, { prefix: "/vinculos" });
     fastify.register(pagerRoutes, { prefix: "/pagers" });
     fastify.register(setorRoutes, { prefix: "/setores" });
+    fastify.register(formCampos, { prefix: "/form-campos" });
+    fastify.register(movimentacaoFormRoutes, { prefix: "/movimentacao-form" });
   },
   { prefix: "/painel" }
 );

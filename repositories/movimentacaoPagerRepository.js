@@ -37,6 +37,15 @@ const findAllByProprioWithDate = async (id, data) => {
   });
 };
 
+const findByPagerId = async (pagerId) => {
+  return MovimentacaoPager.findOne({
+    where: {
+      pagerId,
+      ativa: true
+    },
+  });
+}
+
 const findAllByPager = async (pagerId) => {
   return MovimentacaoPager.findAll({
     where: {
@@ -72,5 +81,6 @@ export default {
   findAllByProprioWithDate,
   removeMovimentacao,
   findDuplicate,
+  findByPagerId,
   findAllByPager
 };

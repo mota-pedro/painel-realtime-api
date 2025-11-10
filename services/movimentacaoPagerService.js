@@ -2,7 +2,7 @@ import movimentacaoPagerRepo from "../repositories/movimentacaoPagerRepository.j
 import pagerRepo from "../repositories/pagerRepository.js";
 
 const handleIncomingMovimentacao = async (
-  { data, hora, pagerId, dataFim, horaFim, prpcod },
+  { data, hora, pagerId, dataFim, horaFim, prpcod, qtdChamados },
   fastify
 ) => {
     try {
@@ -23,7 +23,7 @@ const handleIncomingMovimentacao = async (
         }
 
         const saved = await movimentacaoPagerRepo.createMovimentacao({
-            data, hora, pagerId, ativa: true, dataFim, horaFim, prpcod
+            data, hora, pagerId, ativa: true, dataFim, horaFim, prpcod, qtdChamados
         });
 
         fastify.emitToEmpresa(prpcod, "movimentacao_pager_aberta", {
@@ -33,6 +33,7 @@ const handleIncomingMovimentacao = async (
         ativa: true,
         empresaId: prpcod,
         pagerId,
+        qtdChamados
         });
 
         return saved;
@@ -54,7 +55,7 @@ const handleUpdateMovimentacao = async (id, data, fastify) => {
     if (!updated) throw new Error("Movimentação não encontrada");
 
     if (ativa === false) {
-        fastify.emitToEmpresa(data.prpcod, "movimentacao_fechada", {
+        fastify.emitToEmpresa(data.prpcod, "movimentacao_pager_fechada", {
             id: updated.id,
             data: updated.data,
             hora: updated.hora,
@@ -63,14 +64,25 @@ const handleUpdateMovimentacao = async (id, data, fastify) => {
             ativa: updated.ativa,
             pagerId: updated.pagerId,
             empresaId: updated.prpcod,
+            qtdChamados: updated.qtdChamados
         });
     }
 
     return updated;
   } catch (error) {
-    throw new Error("Erro ao processar chamado");
+    throw new Error("Erro ao processar chamado: " + error.message);
   }
 };
+
+const addChamadoCount = async (id) => {
+    const movimentacao = await movimentacaoPagerRepo.findById(id);
+    if (!movimentacao) throw new Error("Movimentação não encontrada");
+    const newCount = (movimentacao.qtdChamados || 0) + 1;
+    const updated = await movimentacaoPagerRepo.updateMovimentacao(id, {
+        qtdChamados: newCount
+    });
+    return updated;
+}
 
 const listByProprio = async (prpcod) => movimentacaoPagerRepo.findAllByProprio(prpcod);
 
@@ -112,10 +124,12 @@ const listByProprioWithDate = async (prpcod, data) => {
 
 const getById = async (id) => movimentacaoPagerRepo.findById(id);
 
+const getByPagerId = async (pagerId) => movimentacaoPagerRepo.findByPagerId(pagerId);
+
 const remove = async (id) => {
   const removed = await movimentacaoPagerRepo.removeMovimentacao(id);
   if (!removed) throw new Error("Movimentação não encontrada");
   return removed;
 };
 
-export default { handleIncomingMovimentacao, handleUpdateMovimentacao, listByProprio, listByProprioWithDate, getById, remove };
+export default { handleIncomingMovimentacao, handleUpdateMovimentacao, addChamadoCount, listByProprio, listByProprioWithDate, getById, getByPagerId, remove };
