@@ -44,7 +44,7 @@ const handleIncomingMovimentacao = async (
 
 const handleUpdateMovimentacao = async (id, data, fastify) => {
   try {
-    const { ativa, dataFim, horaFim, prpcod } = data;
+    const { ativa, dataFim, horaFim } = data;
 
     const updated = await movimentacaoPagerRepo.updateMovimentacao(id, {
         ativa,
@@ -54,25 +54,24 @@ const handleUpdateMovimentacao = async (id, data, fastify) => {
 
     if (!updated) throw new Error("Movimentação não encontrada");
 
-    if (ativa === false) {
-        fastify.emitToEmpresa(data.prpcod, "movimentacao_pager_fechada", {
-            id: updated.id,
-            data: updated.data,
-            hora: updated.hora,
-            dataFim: updated.dataFim,
-            horaFim: updated.horaFim,
-            ativa: updated.ativa,
-            pagerId: updated.pagerId,
-            empresaId: updated.prpcod,
-            qtdChamados: updated.qtdChamados
-        });
-    }
-
     return updated;
   } catch (error) {
     throw new Error("Erro ao processar chamado: " + error.message);
   }
 };
+
+const handleChamado = async (pagerId, fastify, prpcod) => {
+    const pager = await pagerRepo.findById(pagerId);
+    if (!pager) throw new Error(`Pager com id ${pagerId} não encontrado`);
+
+    fastify.emitDigitalCall(prpcod, {
+      numero: pager.numero,
+      key_value: pager.key_value
+    });
+
+    return pager;
+}
+
 
 const addChamadoCount = async (id) => {
     const movimentacao = await movimentacaoPagerRepo.findById(id);
@@ -132,4 +131,4 @@ const remove = async (id) => {
   return removed;
 };
 
-export default { handleIncomingMovimentacao, handleUpdateMovimentacao, addChamadoCount, listByProprio, listByProprioWithDate, getById, getByPagerId, remove };
+export default { handleIncomingMovimentacao, handleUpdateMovimentacao, addChamadoCount, handleChamado, listByProprio, listByProprioWithDate, getById, getByPagerId, remove };

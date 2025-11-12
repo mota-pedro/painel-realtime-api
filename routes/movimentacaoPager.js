@@ -6,6 +6,6 @@ export default async function (fastify, opts) {
   fastify.get("/pager/:pagerId", movimentacaoPagerController.getByPagerId);
   fastify.get("/:id", movimentacaoPagerController.getById);
   fastify.put("/:id", movimentacaoPagerController.update);
-  fastify.put("/chamando/:id", movimentacaoPagerController.updateChamando);
+  fastify.post("/chamando/:pagerId", movimentacaoPagerController.chamarPager);
   fastify.delete("/:id", movimentacaoPagerController.remove);
 }

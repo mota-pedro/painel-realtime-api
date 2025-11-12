@@ -3,7 +3,7 @@ import modelos from "../models/modelos.js";
 import formCamposService from "../services/formCamposService.js";
 import movimentacaoFormService from "../services/movimentacaoFormService.js";
 
-const { MovimentacaoPager } = modelos;
+const { MovimentacaoPager, Pager } = modelos;
 
 const create = async (req, reply) => {
   try {
@@ -235,12 +235,24 @@ const getByPagerId = async (req, reply) => {
   }
 };
 
-const updateChamando = async (req, reply) => {
+const chamarPager = async (req, reply) => {
   try {
-    const { id } = req.params;
-    const updated = await movimentacaoPagerService.addChamadoCount(id);
-    const result = MovimentacaoPager.mapearParaJson(updated);
-    return reply.send(result);
+    const { pagerId } = req.params;
+    const payload = MovimentacaoPager.fromJson(req.body);
+
+    const pager = await movimentacaoPagerService.handleChamado(pagerId, req.server, payload.prpcod);
+
+    console.log(`PAGER: ${pager}`);
+
+    const movimentacao = await movimentacaoPagerService.getByPagerId(pagerId);
+    let movimentacaoAtualizada = null;
+    if (movimentacao != null) {
+      movimentacaoAtualizada = await movimentacaoPagerService.addChamadoCount(movimentacao.id);
+      console.log(`MOVIMENTAÇÃO ATUALIZADA: ${movimentacaoAtualizada}`);
+    }
+    const resPager = Pager.mapearParaJson(pager);
+    const resMovimentacao = MovimentacaoPager.mapearParaJson(movimentacaoAtualizada);
+    return reply.send({resPager, resMovimentacao});
   } catch (err) {
     req.log.error(err);
     return reply.status(400).send({ error: err.message });
@@ -258,4 +270,4 @@ const remove = async (req, reply) => {
   }
 };
 
-export default { create, update, listByProprio, updateChamando, getById, getByPagerId, remove };
+export default { create, update, listByProprio, chamarPager, getById, getByPagerId, remove };

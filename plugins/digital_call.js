@@ -28,6 +28,19 @@ export default fp(async (fastify, opts) => {
     }
   });
 
+  // Emissão de eventos
+  fastify.decorate("emitDigitalCall", (empresaId, data) => {
+    if (!empresaId || !data) {
+      fastify.log.error("emitDigitalCall: empresaId e data são obrigatórios");
+      return;
+    }
+
+    const room = `empresa_digital_call_${empresaId}`;    
+    io.to(room).emit("digital-call-event", data);
+
+    fastify.log.info(`Digital call emitida para ${room}: ${JSON.stringify(data)}`);
+  });
+
   // Conexões
   io.on("connection", (socket) => {
     fastify.log.info(
