@@ -20,7 +20,10 @@ const findById = async (id) => {
 
 const findAllByProprio = async (prpcod) => {
   return MovimentacaoPager.findAll({
-    where: { prpcod },
+    where: { 
+      prpcod,
+      ativa: true
+    },
     order: [["PRPCOD", "ASC"]],
   });
 };
@@ -29,6 +32,7 @@ const findAllByProprioWithDate = async (id, data) => {
   return MovimentacaoPager.findAll({
     where: {
       id,
+      ativa: true,
       data: {
         [Op.gte]: data
       }
