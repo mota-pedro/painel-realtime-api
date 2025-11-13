@@ -22,6 +22,12 @@ const findAllByMovId= async (movPagerId) => {
   });
 };
 
+const findByCampoAndMov = async ({ formCampoId, movPagerId }) => {
+  return MovimentacaoPagerCampos.findOne({
+    where: { formCampoId, movPagerId },
+  });
+};
+
 const removeMovimentacaoForm = async (id) => {
   const f = await MovimentacaoPagerCampos.findByPk(id);
   if (!f) return null;
@@ -34,5 +40,6 @@ export default {
   updateMovimentacaoForm,
   findById,
   removeMovimentacaoForm,
-  findAllByMovId
+  findAllByMovId,
+  findByCampoAndMov
 };

@@ -1,6 +1,19 @@
 import movimentacaoFormRepo from "../repositories/movimentacaoFormRepository.js";
 
 const create = async ({ formCampoId, movPagerId, valor }) => {
+  const existente = await movimentacaoFormRepo.findByCampoAndMov({
+    formCampoId,
+    movPagerId,
+  });
+
+  if (existente) {
+    if (existente.valor !== valor) {
+      return movimentacaoFormRepo.updateMovimentacaoForm(existente.id, { valor });
+    }
+
+    return existente;
+  }
+
   return movimentacaoFormRepo.createMovimentacaoForm({ formCampoId, movPagerId, valor });
 };
 

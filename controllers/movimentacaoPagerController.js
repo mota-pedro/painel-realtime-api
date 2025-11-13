@@ -106,7 +106,10 @@ const listByProprio = async (req, reply) => {
       if (!valoresPorMov[item.movPagerId]) {
         valoresPorMov[item.movPagerId] = {};
       }
-      valoresPorMov[item.movPagerId][item.formCampoId] = item.valor;
+      valoresPorMov[item.movPagerId][item.formCampoId] = {
+        movFormCampoId: item.id,
+        valor: item.valor
+      };
     }
 
     // Montar resposta
@@ -114,10 +117,11 @@ const listByProprio = async (req, reply) => {
       ...mov,
       campos: formCampos.map(fc => {
         const jsonCampo = modelos.FormCampos.mapearParaJson(fc);
-        const valor = valoresPorMov[mov.id]?.[fc.id];
+        const campoData = valoresPorMov[mov.id]?.[fc.id];
 
-        if (valor !== undefined && valor !== null) {
-          jsonCampo.valor = valor;
+        if (campoData) {
+          jsonCampo.movFormCampoId = campoData.movFormCampoId;
+          jsonCampo.valor = campoData.valor;
         }
 
         return jsonCampo;

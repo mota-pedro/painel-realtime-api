@@ -23,7 +23,7 @@ export default (sequelize) => {
       id: f.id,
       empresaId: f.prpcod,
       nome: f.nome,
-      tipo: f.tipo
+      tipo: f.tipo ?? 'varchar'
     });
 
     return Array.isArray(dados) ? dados.map(mapear) : mapear(dados);
@@ -35,7 +35,7 @@ export default (sequelize) => {
     return {
         id: json.id,
         nome: json.nome,
-        tipo: json.tipo,
+        tipo: json.tipo ?? 'varchar',
         prpcod: json.empresaId
     };
     };
