@@ -29,14 +29,14 @@ export default fp(async (fastify, opts) => {
   });
 
   // Emissão de eventos
-  fastify.decorate("emitDigitalCall", (empresaId, data) => {
+  fastify.decorate("emitDigitalCall", (empresaId, eventName, data) => {
     if (!empresaId || !data) {
       fastify.log.error("emitDigitalCall: empresaId e data são obrigatórios");
       return;
     }
 
     const room = `empresa_digital_call_${empresaId}`;    
-    io.to(room).emit("digital-call-event", data);
+    io.to(room).emit(eventName, data);
 
     fastify.log.info(`Digital call emitida para ${room}: ${JSON.stringify(data)}`);
   });

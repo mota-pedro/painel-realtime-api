@@ -80,9 +80,11 @@ const handleChamado = async (pagerId, fastify, prpcod) => {
     const pager = await pagerRepo.findById(pagerId);
     if (!pager) throw new Error(`Pager com id ${pagerId} não encontrado`);
 
-    fastify.emitDigitalCall(prpcod, "chamando_pager", {
-      numero: pager.numero,
-      key_value: pager.key_value
+    const formattedNum = pager.numero.toString().padStart(4, '0');
+
+    fastify.emitDigitalCall(prpcod, "digital-call-event", {
+      Numero: formattedNum,
+      KeyValue: pager.key_value
     });
 
     return pager;
