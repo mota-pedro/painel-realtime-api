@@ -26,14 +26,16 @@ const handleIncomingMovimentacao = async (
             data, hora, pagerId, ativa: true, dataFim, horaFim, prpcod, qtdChamados
         });
 
-        fastify.emitToEmpresa(prpcod, "movimentacao_pager_aberta", {
-        id: saved.id,
-        data,
-        hora,
-        ativa: true,
-        empresaId: prpcod,
-        pagerId,
-        qtdChamados
+        if (!saved) throw new Error("Erro ao abrir movimentação pager");
+
+        fastify.emitDigitalCall(prpcod, "movimentacao_pager_aberta", {
+          id: saved.id,
+          data,
+          hora,
+          ativa: true,
+          empresaId: prpcod,
+          pagerId,
+          qtdChamados
         });
 
         return saved;
@@ -54,6 +56,20 @@ const handleUpdateMovimentacao = async (id, data, fastify) => {
 
     if (!updated) throw new Error("Movimentação não encontrada");
 
+    if (updated.ativa === false) {
+        fastify.emitDigitalCall(updated.prpcod, "movimentacao_pager_fechada", {
+            id: updated.id,
+            data: updated.data,
+            hora: updated.hora,
+            ativa: updated.ativa,
+            dataFim: updated.dataFim,
+            horaFim: updated.horaFim,
+            empresaId: updated.prpcod,
+            pagerId: updated.pagerId,
+            qtdChamados: updated.qtdChamados
+        });
+    }
+
     return updated;
   } catch (error) {
     throw new Error("Erro ao processar chamado: " + error.message);
@@ -64,7 +80,7 @@ const handleChamado = async (pagerId, fastify, prpcod) => {
     const pager = await pagerRepo.findById(pagerId);
     if (!pager) throw new Error(`Pager com id ${pagerId} não encontrado`);
 
-    fastify.emitDigitalCall(prpcod, {
+    fastify.emitDigitalCall(prpcod, "chamando_pager", {
       numero: pager.numero,
       key_value: pager.key_value
     });
